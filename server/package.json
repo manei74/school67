@@ -1,0 +1,34 @@
+{
+  "name": "school67-api",
+  "version": "1.0.0",
+  "description": "API server for School 67 schedule management system",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "data:import:all": "node scripts/importData.js",
+    "data:clear": "node scripts/clearData.js",
+    "data:calendar": "node scripts/createCalendar.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^8.0.0",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "express-rate-limit": "^7.1.0",
+    "zod": "^3.22.0",
+    "dotenv": "^16.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  },
+  "keywords": [
+    "school",
+    "schedule",
+    "api",
+    "mongodb",
+    "express"
+  ],
+  "author": "School 67",
+  "license": "MIT"
+}
