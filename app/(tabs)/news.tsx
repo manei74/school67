@@ -16,18 +16,18 @@ export default function NewsScreen() {
       title: 'Официальный сайт',
       description: 'Новости, объявления и информация о лицее',
       url: ENV_CONFIG.WEBSITE_URL,
-      icon: 'safari',
-      color: '#007AFF',
-      backgroundColor: '#E3F2FD'
+      icon: 'building.2.fill',
+      color: '#FF6B35',
+      backgroundColor: '#FFF3E0'
     },
     {
       id: 'vk',
       title: 'ВКонтакте',
       description: 'Официальная группа лицея в VK',
       url: ENV_CONFIG.VK_GROUP_URL,
-      icon: 'person.2.fill',
-      color: '#0077FF',
-      backgroundColor: '#E3F2FD'
+      icon: 'message.badge.fill',
+      color: '#4680C2',
+      backgroundColor: '#E8F4FD'
     },
     {
       id: 'telegram',
