@@ -3,53 +3,77 @@ import { StyleSheet, ScrollView, TouchableOpacity, View, Alert } from 'react-nat
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
-// Mock school map data
+// Real school map data from Список кабинетов 2025.xlsx
 interface Room {
   number: string;
   name: string;
   floor: number;
   type: 'classroom' | 'special' | 'office' | 'service';
-  description?: string;
+  classAssigned?: string;
+  teacher?: string;
+  subject?: string;
 }
 
 const SCHOOL_ROOMS: Room[] = [
   // 1st Floor
-  { number: '101', name: 'Кабинет математики', floor: 1, type: 'classroom' },
-  { number: '102', name: 'Кабинет физики', floor: 1, type: 'classroom' },
-  { number: '103', name: 'Кабинет химии', floor: 1, type: 'classroom' },
-  { number: '105', name: 'Лаборатория', floor: 1, type: 'special' },
-  { number: '107', name: 'Кабинет биологии', floor: 1, type: 'classroom' },
-  { number: '108', name: 'Кабинет географии', floor: 1, type: 'classroom' },
-  { number: '110', name: 'Компьютерный класс', floor: 1, type: 'special' },
-  { number: '112', name: 'Библиотека', floor: 1, type: 'special' },
-  { number: 'Спортзал', name: 'Спортивный зал', floor: 1, type: 'special' },
-  { number: 'Столовая', name: 'Столовая', floor: 1, type: 'service' },
-  
+  { number: '101', name: 'Столовая', floor: 1, type: 'service', teacher: 'Союстова Анна Ивановна' },
+  { number: '102', name: 'Изобразительное искусство', floor: 1, type: 'classroom', classAssigned: '6в', subject: 'Изобразительное искусство', teacher: 'Соловьёва Аннна Александровна' },
+  { number: '103', name: 'Начальные классы', floor: 1, type: 'classroom', classAssigned: '1б', subject: 'Начальные классы', teacher: 'Имамова Татьяна Сергеевна' },
+  { number: '104', name: 'Начальные классы', floor: 1, type: 'classroom', classAssigned: '2а', subject: 'Начальные классы', teacher: 'Васильева Ксения Николаевна' },
+  { number: '105', name: 'Начальные классы', floor: 1, type: 'classroom', classAssigned: '3б', subject: 'Начальные классы', teacher: 'Лукоянова Елена Николаевна' },
+  { number: '106', name: 'Начальные классы', floor: 1, type: 'classroom', classAssigned: '1а', subject: 'Начальные классы', teacher: 'Ватутина Екатерина Александровна' },
+  { number: '107', name: 'Начальные классы', floor: 1, type: 'classroom', classAssigned: '3а', subject: 'Начальные классы', teacher: 'Петрова Елена Степановна' },
+  { number: '108', name: 'Начальные классы', floor: 1, type: 'classroom', classAssigned: '4а', subject: 'Начальные классы', teacher: 'Смолина Елена Николаевна' },
+  { number: '109', name: 'Начальные классы', floor: 1, type: 'classroom', classAssigned: '2б', subject: 'Начальные классы', teacher: 'Заневская Светлана Владимировна' },
+  { number: '110', name: 'Начальные классы', floor: 1, type: 'classroom', classAssigned: '4б', subject: 'Начальные классы', teacher: 'Бурдина Яна Владимировна' },
+  { number: '111', name: 'Зам. директора по УВР', floor: 1, type: 'office', teacher: 'Цыганова Светлана Константиновна' },
+  { number: '112', name: 'Медицинский кабинет', floor: 1, type: 'service', teacher: 'Шарапкова Ольга Михайловна' },
+  { number: '113', name: 'ОБЗР/ИЗО', floor: 1, type: 'classroom', teacher: 'Бабкина Елена Ивановна' },
+  { number: '114', name: 'Музыка', floor: 1, type: 'classroom', classAssigned: '5а', subject: 'Музыка', teacher: 'Богословская Ольга Викторовна' },
+  { number: '115', name: 'Хореография', floor: 1, type: 'special', teacher: 'Хорват Лариса Анатольевна' },
+  { number: '116', name: 'БПЛА', floor: 1, type: 'special', teacher: 'Абилова Махаббат Бржановна' },
+  { number: '117', name: 'Труд', floor: 1, type: 'classroom', classAssigned: '5в', subject: 'Труд', teacher: 'Немилостива Оксана Геннадьевна' },
+  { number: '118', name: 'Служба психолого-педагогического сопровождения', floor: 1, type: 'office', teacher: 'Мамаева Валерия Юрьевна' },
+  { number: '119', name: 'Начальные классы', floor: 1, type: 'classroom', classAssigned: '2в/2г', subject: 'Начальные классы', teacher: 'Основина Татьяна Ивановна / Ростомян Анастасия Валерьевна' },
+  { number: '120', name: 'Начальные классы (2 смена)', floor: 1, type: 'classroom', classAssigned: '4в', teacher: 'Решетова Наталья Андреевна' },
+  { number: '121', name: 'Зам. директора по безопасности', floor: 1, type: 'office', teacher: 'Бабкина Елена Ивановна' },
+  { number: '122', name: 'Педагоги-психологи', floor: 1, type: 'office', teacher: 'Краснопеева Анна Петровна' },
+
   // 2nd Floor
-  { number: '201', name: 'Кабинет русского языка', floor: 2, type: 'classroom' },
-  { number: '202', name: 'Кабинет литературы', floor: 2, type: 'classroom' },
-  { number: '203', name: 'Кабинет английского языка', floor: 2, type: 'classroom' },
-  { number: '205', name: 'Кабинет истории', floor: 2, type: 'classroom' },
-  { number: '207', name: 'Кабинет обществознания', floor: 2, type: 'classroom' },
-  { number: '208', name: 'Кабинет французского языка', floor: 2, type: 'classroom' },
-  { number: '210', name: 'Актовый зал', floor: 2, type: 'special' },
-  { number: '212', name: 'Музыкальный класс', floor: 2, type: 'classroom' },
-  
+  { number: '201', name: 'Бухгалтерия', floor: 2, type: 'office', teacher: 'Уварова Наталья Борисовна' },
+  { number: '202', name: 'Английского языка', floor: 2, type: 'classroom', subject: 'Английский язык' },
+  { number: '203', name: 'Малый спортзал', floor: 2, type: 'special', teacher: 'Хорват Андрей Михайлович' },
+  { number: '204', name: 'Библиотека', floor: 2, type: 'special', teacher: 'Захарова Валентина Сергеевна' },
+  { number: '205', name: 'Зам. директора', floor: 2, type: 'office', teacher: 'Манеева Наталья Николаевна' },
+  { number: '206', name: 'Радиорубка', floor: 2, type: 'special', teacher: 'Ватутина Галина Александровна' },
+  { number: '207', name: 'Информатика', floor: 2, type: 'classroom', subject: 'Информатика', teacher: 'Соловьёва Евгения Олеговна' },
+  { number: '208', name: 'Русский язык', floor: 2, type: 'classroom', classAssigned: '8б', subject: 'Русский язык', teacher: 'Дружинина Светлана Владимировна' },
+  { number: '209', name: 'География', floor: 2, type: 'classroom', classAssigned: '7в', subject: 'География', teacher: 'Сибирмовских Варвара Владимировна' },
+  { number: '210', name: 'Математика', floor: 2, type: 'classroom', classAssigned: '7б', subject: 'Математика', teacher: 'Клюева Валентина Васильевна' },
+  { number: '211', name: 'Математика', floor: 2, type: 'classroom', classAssigned: '10а', subject: 'Математика', teacher: 'Шалёва Ирина Станиславовна' },
+  { number: '212', name: 'Математика', floor: 2, type: 'classroom', classAssigned: '6б', subject: 'Математика', teacher: 'Терешкова Екатерина Александровна' },
+  { number: '213', name: 'Учительская, зам. директора по УВР', floor: 2, type: 'office', teacher: 'Перегудова Наталья Евгеньевна' },
+  { number: '214', name: 'Директор/Секретарь', floor: 2, type: 'office', teacher: 'Веретенникова Светлана Павловна / Глумова Анастасия Александровна' },
+  { number: '215', name: 'Иностранные языки', floor: 2, type: 'classroom', subject: 'Иностранные языки', teacher: 'Прокопенко Ольга Христофоровна' },
+  { number: '216', name: 'Физика', floor: 2, type: 'classroom', classAssigned: '10б', subject: 'Физика', teacher: 'Манеева Наталья Николаевна' },
+  { number: '217', name: 'Английский язык', floor: 2, type: 'classroom', subject: 'Английский язык', teacher: 'Козлова Мария Сергеевна' },
+  { number: '218', name: 'Большой спортивный зал', floor: 2, type: 'special', teacher: 'Пензина Юлия Андреевна' },
+  { number: '218а', name: 'Английский язык', floor: 2, type: 'classroom', classAssigned: '8в', subject: 'Английский язык', teacher: 'Евченко Екатерина Юрьевна' },
+  { number: '219', name: 'Начальные классы (2 смены)', floor: 2, type: 'classroom', classAssigned: '1в/3в', subject: 'Начальные классы', teacher: 'Мансурова Мария Андреевна / Башкина Елизавета Витальевна' },
+  { number: '220', name: 'Физика', floor: 2, type: 'classroom', subject: 'Физика', teacher: 'Акимов Дмитрий Витальевич' },
+  { number: '221', name: 'Зам. директора по ВР, педагоги-организаторы', floor: 2, type: 'office', teacher: 'Шалёва Ирина Станиславовна' },
+
   // 3rd Floor
-  { number: '301', name: 'Кабинет математики', floor: 3, type: 'classroom' },
-  { number: '302', name: 'Кабинет математики', floor: 3, type: 'classroom' },
-  { number: '303', name: 'Кабинет информатики', floor: 3, type: 'classroom' },
-  { number: '305', name: 'Кабинет ИЗО', floor: 3, type: 'classroom' },
-  { number: '307', name: 'Кабинет технологии (мальчики)', floor: 3, type: 'classroom' },
-  { number: '308', name: 'Кабинет технологии (девочки)', floor: 3, type: 'classroom' },
-  { number: '310', name: 'Кабинет ОБЖ', floor: 3, type: 'classroom' },
-  { number: '312', name: 'Конференц-зал', floor: 3, type: 'special' },
-  
-  // Offices
-  { number: 'Директор', name: 'Кабинет директора', floor: 2, type: 'office', description: 'Каб. 215' },
-  { number: 'Завуч', name: 'Кабинет завуча', floor: 2, type: 'office', description: 'Каб. 216' },
-  { number: 'Секретарь', name: 'Секретарь', floor: 1, type: 'office', description: 'Каб. 115' },
-  { number: 'Медпункт', name: 'Медицинский кабинет', floor: 1, type: 'service', description: 'Каб. 116' },
+  { number: '301', name: 'Биология', floor: 3, type: 'classroom', classAssigned: '9а', subject: 'Биология', teacher: 'Зимина Наталья Валерьевна' },
+  { number: '302', name: 'Лаборантская химии и биологии', floor: 3, type: 'special' },
+  { number: '303', name: 'Химия', floor: 3, type: 'classroom', classAssigned: '11а', subject: 'Химия', teacher: 'Харин Олег Анатольевич' },
+  { number: '304', name: 'Английский язык', floor: 3, type: 'classroom', classAssigned: '9в', subject: 'Английский язык', teacher: 'Кислицына Ольга Алексеевна' },
+  { number: '305', name: 'Биология', floor: 3, type: 'classroom', classAssigned: '5б', subject: 'Биология', teacher: 'Женакова Анастасия Владимировна' },
+  { number: '306', name: 'Английский язык', floor: 3, type: 'classroom', classAssigned: '8а', subject: 'Английский язык', teacher: 'Целикова Кристина Александровна' },
+  { number: '307', name: 'Лаборантская', floor: 3, type: 'special' },
+  { number: '308', name: 'Русский язык', floor: 3, type: 'classroom', classAssigned: '7а', subject: 'Русский язык', teacher: 'Бобырева Мария Александровна' },
+  { number: '309', name: 'История', floor: 3, type: 'classroom', classAssigned: '9б', subject: 'История', teacher: 'Страшнова Наталья Николаевна' },
+  { number: '310', name: 'Русский язык', floor: 3, type: 'classroom', classAssigned: '6а', subject: 'Русский язык', teacher: 'Вершинина Ирина Константиновна' },
 ];
 
 export default function SchoolNavigationScreen() {
@@ -92,11 +116,21 @@ export default function SchoolNavigationScreen() {
   };
 
   const showRoomInfo = (room: Room) => {
-    Alert.alert(
-      room.name,
-      `Кабинет: ${room.number}\nЭтаж: ${room.floor}\n${room.description || ''}`,
-      [{ text: 'OK', style: 'default' }]
-    );
+    let description = `Кабинет: ${room.number}\nЭтаж: ${room.floor}`;
+    
+    if (room.classAssigned) {
+      description += `\nКласс: ${room.classAssigned}`;
+    }
+    
+    if (room.subject) {
+      description += `\nПредмет: ${room.subject}`;
+    }
+    
+    if (room.teacher) {
+      description += `\nОтветственный: ${room.teacher}`;
+    }
+    
+    Alert.alert(room.name, description, [{ text: 'OK', style: 'default' }]);
   };
 
   const filteredRooms = getFilteredRooms();
@@ -188,9 +222,14 @@ export default function SchoolNavigationScreen() {
                 <ThemedText style={styles.roomName} numberOfLines={2}>
                   {room.name}
                 </ThemedText>
-                {room.description && (
+                {room.classAssigned && (
                   <ThemedText style={styles.roomDescription}>
-                    {room.description}
+                    Класс: {room.classAssigned}
+                  </ThemedText>
+                )}
+                {room.teacher && (
+                  <ThemedText style={styles.roomTeacher} numberOfLines={1}>
+                    {room.teacher.split(' ').slice(0, 2).join(' ')}
                   </ThemedText>
                 )}
               </TouchableOpacity>
@@ -207,7 +246,7 @@ export default function SchoolNavigationScreen() {
           <ThemedView style={styles.quickFindItems}>
             <TouchableOpacity 
               style={styles.quickFindButton}
-              onPress={() => Alert.alert('Столовая', 'Столовая находится на 1 этаже')}
+              onPress={() => Alert.alert('Столовая', 'Столовая находится в кабинете 101 на 1 этаже\nОтветственный: Союстова Анна Ивановна')}
             >
               <ThemedText style={styles.quickFindIcon}>🍽️</ThemedText>
               <ThemedText style={styles.quickFindText}>Столовая</ThemedText>
@@ -215,7 +254,7 @@ export default function SchoolNavigationScreen() {
             
             <TouchableOpacity 
               style={styles.quickFindButton}
-              onPress={() => Alert.alert('Спортзал', 'Спортивный зал находится на 1 этаже')}
+              onPress={() => Alert.alert('Спортзал', 'Большой спортзал - кабинет 218 на 2 этаже\nМалый спортзал - кабинет 203 на 2 этаже')}
             >
               <ThemedText style={styles.quickFindIcon}>🏀</ThemedText>
               <ThemedText style={styles.quickFindText}>Спортзал</ThemedText>
@@ -223,7 +262,7 @@ export default function SchoolNavigationScreen() {
             
             <TouchableOpacity 
               style={styles.quickFindButton}
-              onPress={() => Alert.alert('Библиотека', 'Библиотека находится в кабинете 112 на 1 этаже')}
+              onPress={() => Alert.alert('Библиотека', 'Библиотека находится в кабинете 204 на 2 этаже\nОтветственный: Захарова Валентина Сергеевна')}
             >
               <ThemedText style={styles.quickFindIcon}>📚</ThemedText>
               <ThemedText style={styles.quickFindText}>Библиотека</ThemedText>
@@ -231,10 +270,10 @@ export default function SchoolNavigationScreen() {
             
             <TouchableOpacity 
               style={styles.quickFindButton}
-              onPress={() => Alert.alert('Актовый зал', 'Актовый зал находится в кабинете 210 на 2 этаже')}
+              onPress={() => Alert.alert('Директор', 'Кабинет директора - кабинет 214 на 2 этаже\nВеретенникова Светлана Павловна')}
             >
-              <ThemedText style={styles.quickFindIcon}>🎭</ThemedText>
-              <ThemedText style={styles.quickFindText}>Актовый зал</ThemedText>
+              <ThemedText style={styles.quickFindIcon}>🏢</ThemedText>
+              <ThemedText style={styles.quickFindText}>Директор</ThemedText>
             </TouchableOpacity>
           </ThemedView>
         </ThemedView>
@@ -382,6 +421,12 @@ const styles = StyleSheet.create({
   roomDescription: {
     color: '#999',
     fontSize: 12,
+    marginBottom: 2,
+  },
+  roomTeacher: {
+    color: '#007AFF',
+    fontSize: 11,
+    fontWeight: '500',
   },
   quickFindContainer: {
     paddingHorizontal: 16,
