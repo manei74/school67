@@ -71,7 +71,6 @@ export default function BellsScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.header}>
-        <ThemedText type="title">Звонки</ThemedText>
         <ThemedText style={styles.currentTime}>
           Текущее время: {getCurrentTime()}
         </ThemedText>
@@ -219,11 +218,10 @@ export default function BellsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 50,
   },
   header: {
     paddingHorizontal: 16,
-    paddingVertical: 20,
+    paddingVertical: 8,
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
   },
