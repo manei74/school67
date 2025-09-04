@@ -1,8 +1,9 @@
 import React from 'react';
-import { StyleSheet, ScrollView, TouchableOpacity, Linking, View } from 'react-native';
+import { StyleSheet, ScrollView, TouchableOpacity, Linking, View, Image } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { FontAwesome } from '@expo/vector-icons';
 import { ENV_CONFIG } from '@/src/config/env';
 
 export default function NewsScreen() {
@@ -16,7 +17,8 @@ export default function NewsScreen() {
       title: 'Официальный сайт',
       description: 'Новости, объявления и информация о лицее',
       url: ENV_CONFIG.WEBSITE_URL,
-      icon: 'building.2.fill',
+      iconType: 'image',
+      iconSource: require('@/assets/images/icon.png'),
       color: '#FF6B35',
       backgroundColor: '#FFF3E0'
     },
@@ -25,7 +27,8 @@ export default function NewsScreen() {
       title: 'ВКонтакте',
       description: 'Официальная группа лицея в VK',
       url: ENV_CONFIG.VK_GROUP_URL,
-      icon: 'message.badge.fill',
+      iconType: 'fontawesome',
+      icon: 'vk',
       color: '#4680C2',
       backgroundColor: '#E8F4FD'
     },
@@ -62,11 +65,24 @@ export default function NewsScreen() {
                 styles.iconContainer,
                 { backgroundColor: link.backgroundColor }
               ]}>
-                <IconSymbol 
-                  size={24} 
-                  name={link.icon as any} 
-                  color={link.color} 
-                />
+                {link.iconType === 'image' ? (
+                  <Image 
+                    source={link.iconSource} 
+                    style={styles.iconImage}
+                  />
+                ) : link.iconType === 'fontawesome' ? (
+                  <FontAwesome 
+                    name={link.icon as any} 
+                    size={24} 
+                    color={link.color} 
+                  />
+                ) : (
+                  <IconSymbol 
+                    size={24} 
+                    name={link.icon as any} 
+                    color={link.color} 
+                  />
+                )}
               </ThemedView>
               
               <ThemedView style={styles.linkContent}>
@@ -151,6 +167,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
+  },
+  iconImage: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
   },
   linkContent: {
     flex: 1,
