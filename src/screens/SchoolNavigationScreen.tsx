@@ -138,7 +138,6 @@ export default function SchoolNavigationScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.header}>
-        <ThemedText type="title">Навигация по школе</ThemedText>
         <ThemedText style={styles.subtitle}>
           3 этажа • {SCHOOL_ROOMS.length} кабинетов
         </ThemedText>
