@@ -2,12 +2,11 @@ import {
   MOCK_BELLS,
   MOCK_CLASSES,
   MOCK_HOLIDAYS,
-  MOCK_NEWS,
   generateScheduleForDate,
   generateWeekSchedule,
   getNextHoliday,
 } from "../data/mockData";
-import { Class, Holiday, NewsItem, Schedule, ApiLesson } from "../types";
+import { Class, Holiday, Schedule, ApiLesson } from "../types";
 import { ENV_CONFIG } from "../config/env";
 
 // API Service class

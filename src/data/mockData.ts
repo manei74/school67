@@ -1,4 +1,4 @@
-import { Class, Schedule, NewsItem, Olympiad, Holiday, Bell, Lesson } from '../types';
+import { Class, Schedule, Olympiad, Holiday, Bell, Lesson } from '../types';
 
 console.log('📊 Mock data file loading');
 

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { AppSettings, Class, Schedule, NewsItem, Olympiad, Holiday } from '../types';
+import { AppSettings, Class, Schedule, Olympiad, Holiday } from '../types';
 
 interface AppState {
   settings: AppSettings;
@@ -7,7 +7,6 @@ interface AppState {
   classes: Class[];
   schedule: Schedule | null;
   weekSchedule: Schedule[];
-  news: NewsItem[];
   olympiads: Olympiad[];
   holidays: Holiday[];
   isLoading: boolean;
@@ -21,7 +20,6 @@ interface AppActions {
   completeOnboarding: () => void;
   setSchedule: (schedule: Schedule) => void;
   setWeekSchedule: (schedules: Schedule[]) => void;
-  setNews: (news: NewsItem[]) => void;
   setOlympiads: (olympiads: Olympiad[]) => void;
   setHolidays: (holidays: Holiday[]) => void;
   setLoading: (loading: boolean) => void;
@@ -45,7 +43,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     classes: [],
     schedule: null,
     weekSchedule: [],
-    news: [],
     olympiads: [],
     holidays: [],
     isLoading: false,
@@ -80,10 +77,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
     setWeekSchedule: (schedules: Schedule[]) => {
       setState(prev => ({ ...prev, weekSchedule: schedules }));
-    },
-
-    setNews: (news: NewsItem[]) => {
-      setState(prev => ({ ...prev, news }));
     },
 
     setOlympiads: (olympiads: Olympiad[]) => {

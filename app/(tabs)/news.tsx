@@ -1,224 +1,106 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, ScrollView, RefreshControl, TouchableOpacity, Linking } from 'react-native';
+import React from 'react';
+import { StyleSheet, ScrollView, TouchableOpacity, Linking, View } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { useAppStore } from '@/src/store/simpleStore';
-import { apiService } from '@/src/services/api';
-import { NewsItem } from '@/src/types';
+import { IconSymbol } from '@/components/ui/IconSymbol';
+import { ENV_CONFIG } from '@/src/config/env';
 
 export default function NewsScreen() {
-  const { news, setNews, isLoading, setLoading } = useAppStore();
-  const [refreshing, setRefreshing] = useState(false);
-  const [selectedSource, setSelectedSource] = useState<'all' | 'site' | 'vk' | 'telegram'>('all');
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-
-  useEffect(() => {
-    loadNews();
-  }, [selectedSource]);
-
-  useEffect(() => {
-    // Auto-refresh news every 5 minutes when app is active
-    const interval = setInterval(() => {
-      if (selectedSource === 'all' || selectedSource === 'site') {
-        loadNews(true); // Silent refresh
-      }
-    }, 5 * 60 * 1000); // 5 minutes
-
-    return () => clearInterval(interval);
-  }, [selectedSource]);
-
-  const loadNews = async (silent: boolean = false) => {
-    if (!silent) {
-      setLoading(true);
-    }
-    try {
-      const source = selectedSource === 'all' ? undefined : selectedSource;
-      const newsData = await apiService.getNews(source as any);
-      setNews(newsData);
-      setLastUpdated(new Date());
-    } catch (error) {
-      console.error('Failed to load news:', error);
-    } finally {
-      if (!silent) {
-        setLoading(false);
-      }
-    }
+  const openLink = (url: string) => {
+    Linking.openURL(url);
   };
 
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await loadNews();
-    setRefreshing(false);
-  };
-
-  const openLink = (url?: string) => {
-    if (url) {
-      Linking.openURL(url);
+  const mediaLinks = [
+    {
+      id: 'website',
+      title: 'Официальный сайт',
+      description: 'Новости, объявления и информация о лицее',
+      url: ENV_CONFIG.WEBSITE_URL,
+      icon: 'safari',
+      color: '#007AFF',
+      backgroundColor: '#E3F2FD'
+    },
+    {
+      id: 'vk',
+      title: 'ВКонтакте',
+      description: 'Официальная группа лицея в VK',
+      url: ENV_CONFIG.VK_GROUP_URL,
+      icon: 'person.2.fill',
+      color: '#0077FF',
+      backgroundColor: '#E3F2FD'
+    },
+    {
+      id: 'telegram',
+      title: 'Telegram канал',
+      description: 'Оперативные новости и уведомления',
+      url: ENV_CONFIG.TELEGRAM_CHANNEL_URL,
+      icon: 'paperplane.fill',
+      color: '#0088CC',
+      backgroundColor: '#E1F5FE'
     }
-  };
-
-  const getSourceLabel = (source: NewsItem['source']) => {
-    switch (source) {
-      case 'site': return '🌐 Сайт лицея';
-      case 'vk': return '🔵 ВКонтакте';
-      case 'telegram': return '✈️ Telegram';
-      default: return 'Новость';
-    }
-  };
-
-  const getSourceColor = (source: NewsItem['source']) => {
-    switch (source) {
-      case 'site': return '#007AFF';
-      case 'vk': return '#0077FF';
-      case 'telegram': return '#0088CC';
-      default: return '#666';
-    }
-  };
-
-  const filteredNews = selectedSource === 'all' 
-    ? news 
-    : news.filter(item => item.source === selectedSource);
+  ];
 
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.header}>
-        <ThemedText type="title">Новости</ThemedText>
-        {lastUpdated && (
-          <ThemedText style={styles.lastUpdated}>
-            Обновлено: {lastUpdated.toLocaleTimeString('ru-RU', { 
-              hour: '2-digit', 
-              minute: '2-digit' 
-            })}
+        <ThemedText type="title">Новости и медиа</ThemedText>
+        <ThemedText style={styles.subtitle}>
+          Официальные источники информации лицея
+        </ThemedText>
+      </ThemedView>
+
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        <ThemedView style={styles.linksContainer}>
+          {mediaLinks.map((link) => (
+            <TouchableOpacity
+              key={link.id}
+              style={styles.linkCard}
+              onPress={() => openLink(link.url)}
+              activeOpacity={0.8}
+            >
+              <ThemedView style={[
+                styles.iconContainer,
+                { backgroundColor: link.backgroundColor }
+              ]}>
+                <IconSymbol 
+                  size={24} 
+                  name={link.icon as any} 
+                  color={link.color} 
+                />
+              </ThemedView>
+              
+              <ThemedView style={styles.linkContent}>
+                <ThemedText type="defaultSemiBold" style={styles.linkTitle}>
+                  {link.title}
+                </ThemedText>
+                <ThemedText style={styles.linkDescription}>
+                  {link.description}
+                </ThemedText>
+                <ThemedText style={styles.linkUrl}>
+                  {link.url.replace(/^https?:\/\//, '')}
+                </ThemedText>
+              </ThemedView>
+              
+              <IconSymbol 
+                size={16} 
+                name="chevron.right" 
+                color="#666" 
+              />
+            </TouchableOpacity>
+          ))}
+        </ThemedView>
+        
+        <ThemedView style={styles.infoSection}>
+          <ThemedText type="subtitle" style={styles.infoTitle}>
+            ℹ️ Информация
           </ThemedText>
-        )}
-      </ThemedView>
-
-      {/* Source Filter */}
-      <ThemedView style={styles.filterContainer}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <TouchableOpacity 
-            style={[
-              styles.filterButton,
-              selectedSource === 'all' && styles.filterButtonActive
-            ]}
-            onPress={() => setSelectedSource('all')}
-          >
-            <ThemedText style={[
-              styles.filterButtonText,
-              selectedSource === 'all' && styles.filterButtonTextActive
-            ]}>
-              Все
-            </ThemedText>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={[
-              styles.filterButton,
-              selectedSource === 'site' && styles.filterButtonActive
-            ]}
-            onPress={() => setSelectedSource('site')}
-          >
-            <ThemedText style={[
-              styles.filterButtonText,
-              selectedSource === 'site' && styles.filterButtonTextActive
-            ]}>
-              Сайт
-            </ThemedText>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={[
-              styles.filterButton,
-              selectedSource === 'vk' && styles.filterButtonActive
-            ]}
-            onPress={() => setSelectedSource('vk')}
-          >
-            <ThemedText style={[
-              styles.filterButtonText,
-              selectedSource === 'vk' && styles.filterButtonTextActive
-            ]}>
-              ВК
-            </ThemedText>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={[
-              styles.filterButton,
-              selectedSource === 'telegram' && styles.filterButtonActive
-            ]}
-            onPress={() => setSelectedSource('telegram')}
-          >
-            <ThemedText style={[
-              styles.filterButtonText,
-              selectedSource === 'telegram' && styles.filterButtonTextActive
-            ]}>
-              Telegram
-            </ThemedText>
-          </TouchableOpacity>
-        </ScrollView>
-      </ThemedView>
-
-      <ScrollView 
-        style={styles.scrollView}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
-        {isLoading ? (
-          <ThemedView style={styles.loadingContainer}>
-            <ThemedText>Загрузка новостей...</ThemedText>
-          </ThemedView>
-        ) : filteredNews.length > 0 ? (
-          <ThemedView style={styles.newsContainer}>
-            {filteredNews.map((item) => (
-              <TouchableOpacity
-                key={item.id}
-                style={styles.newsCard}
-                onPress={() => openLink(item.link)}
-                activeOpacity={0.7}
-              >
-                <ThemedView style={styles.newsHeader}>
-                  <ThemedView 
-                    style={[
-                      styles.sourceBadge,
-                      { backgroundColor: getSourceColor(item.source) + '20' }
-                    ]}
-                  >
-                    <ThemedText 
-                      style={[
-                        styles.sourceText,
-                        { color: getSourceColor(item.source) }
-                      ]}
-                    >
-                      {getSourceLabel(item.source)}
-                    </ThemedText>
-                  </ThemedView>
-                  <ThemedText style={styles.newsDate}>
-                    {new Date(item.date).toLocaleDateString('ru-RU')}
-                  </ThemedText>
-                </ThemedView>
-                
-                <ThemedText type="defaultSemiBold" style={styles.newsTitle}>
-                  {item.title}
-                </ThemedText>
-                
-                <ThemedText style={styles.newsContent} numberOfLines={3}>
-                  {item.content}
-                </ThemedText>
-                
-                {item.link && (
-                  <ThemedText style={styles.readMore}>
-                    Читать полностью →
-                  </ThemedText>
-                )}
-              </TouchableOpacity>
-            ))}
-          </ThemedView>
-        ) : (
-          <ThemedView style={styles.emptyState}>
-            <ThemedText>Нет новостей для отображения</ThemedText>
-          </ThemedView>
-        )}
+          <ThemedText style={styles.infoText}>
+            • Все новости публикуются на официальном сайте лицея{'\n'}
+            • В группе ВК размещаются актуальные объявления{'\n'}
+            • Telegram канал - для оперативных уведомлений{'\n'}
+            • Следите за обновлениями во всех источниках
+          </ThemedText>
+        </ThemedView>
       </ScrollView>
     </ThemedView>
   );
@@ -235,51 +117,20 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
   },
-  lastUpdated: {
-    fontSize: 12,
+  subtitle: {
+    fontSize: 16,
     color: '#666',
     marginTop: 4,
-  },
-  filterContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-  },
-  filterButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginRight: 8,
-    borderRadius: 20,
-    backgroundColor: '#f0f0f0',
-  },
-  filterButtonActive: {
-    backgroundColor: '#007AFF',
-  },
-  filterButtonText: {
-    color: '#666',
-    fontSize: 14,
-  },
-  filterButtonTextActive: {
-    color: '#FFFFFF',
   },
   scrollView: {
     flex: 1,
   },
-  loadingContainer: {
-    paddingVertical: 32,
-    alignItems: 'center',
-  },
-  emptyState: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 50,
-  },
-  newsContainer: {
+  linksContainer: {
     padding: 16,
   },
-  newsCard: {
+  linkCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#f8f9fa',
     padding: 16,
     marginBottom: 12,
@@ -293,37 +144,43 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  newsHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  iconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12,
+    marginRight: 16,
   },
-  sourceBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+  linkContent: {
+    flex: 1,
+  },
+  linkTitle: {
+    marginBottom: 4,
+  },
+  linkDescription: {
+    color: '#666',
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  linkUrl: {
+    color: '#007AFF',
+    fontSize: 12,
+    fontFamily: 'monospace',
+  },
+  infoSection: {
+    margin: 16,
+    marginTop: 8,
+    padding: 16,
+    backgroundColor: '#E3F2FD',
     borderRadius: 12,
   },
-  sourceText: {
-    fontSize: 12,
-    fontWeight: '600',
+  infoTitle: {
+    marginBottom: 12,
+    color: '#1976D2',
   },
-  newsDate: {
-    color: '#666',
-    fontSize: 12,
-  },
-  newsTitle: {
-    marginBottom: 8,
-    lineHeight: 22,
-  },
-  newsContent: {
+  infoText: {
     color: '#666',
     lineHeight: 20,
-    marginBottom: 12,
-  },
-  readMore: {
-    color: '#007AFF',
-    fontSize: 14,
-    fontWeight: '600',
   },
 });
