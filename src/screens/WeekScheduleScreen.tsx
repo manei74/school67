@@ -58,13 +58,18 @@ export default function WeekScheduleScreen() {
   };
 
   const getDayName = (dateString: string) => {
-    const date = new Date(dateString);
+    // Create date properly to avoid timezone issues
+    const [year, month, day] = dateString.split('-');
+    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
     const days = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+    console.log(`📅 Date: ${dateString} -> Day: ${date.getDay()} (${days[date.getDay()]})`);
     return days[date.getDay()];
   };
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+    // Create date properly to avoid timezone issues  
+    const [year, month, day] = dateString.split('-');
+    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
     return date.toLocaleDateString('ru-RU', { 
       day: 'numeric', 
       month: 'long' 
