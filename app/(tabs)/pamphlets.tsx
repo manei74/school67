@@ -107,7 +107,6 @@ export default function PamphletsScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.header}>
-        <ThemedText type="title">Памятки</ThemedText>
         <ThemedText style={styles.subtitle}>
           Важная информация для учащихся и родителей
         </ThemedText>
@@ -179,11 +178,10 @@ export default function PamphletsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 50,
   },
   header: {
     paddingHorizontal: 16,
-    paddingVertical: 20,
+    paddingVertical: 8,
     borderBottomWidth: 1,
     borderBottomColor: "#e0e0e0",
   },
