@@ -83,11 +83,6 @@ export default function WeekScheduleScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedView style={styles.header}>
-        <ThemedText type="title">Расписание на неделю</ThemedText>
-        <ThemedText type="subtitle">{settings.selectedClassId} класс</ThemedText>
-      </ThemedView>
-
       <ScrollView 
         style={styles.scrollView}
         refreshControl={
@@ -179,13 +174,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 0,
-  },
-  header: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    paddingTop: 0,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
   },
   scrollView: {
     flex: 1,

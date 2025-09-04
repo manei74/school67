@@ -29,15 +29,43 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: 'Расписание',
+          tabBarIcon: ({ color }) => <IconSymbol size={24} name="calendar" color={color} />,
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="calendar"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Календарь',
+          tabBarIcon: ({ color }) => <IconSymbol size={24} name="calendar.badge.clock" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="news"
+        options={{
+          title: 'Новости',
+          tabBarIcon: ({ color }) => <IconSymbol size={24} name="newspaper" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="olympiads"
+        options={{
+          title: 'Олимпиады',
+          tabBarIcon: ({ color }) => <IconSymbol size={24} name="trophy" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="pamphlets"
+        options={{
+          title: 'Памятки',
+          tabBarIcon: ({ color }) => <IconSymbol size={24} name="doc.text" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="graduates"
+        options={{
+          title: 'Выпускнику',
+          tabBarIcon: ({ color }) => <IconSymbol size={24} name="graduationcap" color={color} />,
         }}
       />
     </Tabs>
