@@ -7,6 +7,7 @@ import WeekScheduleScreen from "@/src/screens/WeekScheduleScreen";
 import { apiService } from "@/src/services/api";
 import { useAppStore } from "@/src/store/simpleStore";
 import { formatClassName } from "@/src/utils/classUtils";
+import { checkForUpdatesManually } from "@/src/components/UpdateChecker";
 import React, { useEffect, useState } from "react";
 import {
   Alert,
@@ -113,6 +114,10 @@ export default function ScheduleScreen() {
       {
         text: "Сменить класс",
         onPress: () => showClassSelection(),
+      },
+      {
+        text: "Проверить обновления",
+        onPress: () => checkForUpdatesManually(),
       },
       {
         text: "Обратная связь",
