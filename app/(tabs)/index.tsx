@@ -19,7 +19,8 @@ export default function ScheduleScreen() {
     isOnboardingCompleted,
     setSchedule, 
     setLoading,
-    setSelectedClass
+    setSelectedClass,
+    resetOnboarding
   } = useAppStore();
   
   const [refreshing, setRefreshing] = useState(false);
@@ -74,54 +75,22 @@ export default function ScheduleScreen() {
     );
   };
 
-  const showClassSelection = async () => {
-    try {
-      const classes = await apiService.getClasses();
-      console.log('📚 All classes for selection:', classes);
-      
-      // Create a simple string with all classes for debugging
-      const classString = classes.map(c => c.title).join(', ');
-      console.log('📚 All class titles:', classString);
-      
-      // Alert has limitations, so let's try grouping by grade
-      const gradeGroups: { [key: string]: any[] } = {};
-      classes.forEach(cls => {
-        const grade = cls.title.charAt(0);
-        if (!gradeGroups[grade]) gradeGroups[grade] = [];
-        gradeGroups[grade].push(cls);
-      });
-      
-      console.log('📚 Grade groups:', Object.keys(gradeGroups));
-      
-      // Show grade selection first (limited buttons)
-      const gradeButtons = Object.keys(gradeGroups).sort().map(grade => ({
-        text: `${grade} класс`,
-        onPress: () => showClassesForGrade(gradeGroups[grade], grade),
-      }));
-      gradeButtons.push({ text: 'Отмена', style: 'cancel' });
-
-      Alert.alert('Выберите параллель', `Всего ${classes.length} классов`, gradeButtons);
-    } catch (error) {
-      Alert.alert('Ошибка', 'Не удалось загрузить список классов');
-    }
-  };
-
-  const showClassesForGrade = (classesInGrade: any[], grade: string) => {
-    console.log(`📚 Classes in grade ${grade}:`, classesInGrade);
-    const buttons = classesInGrade.map(cls => ({
-      text: cls.title,
-      onPress: () => {
-        console.log('🎯 Selected class:', cls);
-        setSelectedClass(cls.id);
-        loadTodaySchedule();
-      },
-    }));
-    buttons.push({ 
-      text: 'Назад', 
-      onPress: () => showClassSelection(),
-    });
-    
-    Alert.alert(`${grade} класс`, `Выберите класс из ${classesInGrade.length} доступных:`, buttons);
+  const showClassSelection = () => {
+    console.log('🔄 Redirecting to class selection (onboarding screen)');
+    Alert.alert(
+      'Смена класса', 
+      'Сейчас откроется экран выбора класса со всеми доступными вариантами',
+      [
+        { text: 'Отмена', style: 'cancel' },
+        { 
+          text: 'Продолжить', 
+          onPress: () => {
+            console.log('🔄 Resetting onboarding to show class selection');
+            resetOnboarding();
+          }
+        }
+      ]
+    );
   };
 
   const renderTabButton = (tab: ScheduleTab, label: string, icon: string) => (

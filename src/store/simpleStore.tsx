@@ -18,6 +18,7 @@ interface AppActions {
   updateSettings: (settings: Partial<AppSettings>) => void;
   setSelectedClass: (classId: string) => void;
   completeOnboarding: () => void;
+  resetOnboarding: () => void;
   setSchedule: (schedule: Schedule) => void;
   setWeekSchedule: (schedules: Schedule[]) => void;
   setOlympiads: (olympiads: Olympiad[]) => void;
@@ -69,6 +70,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
     completeOnboarding: () => {
       setState(prev => ({ ...prev, isOnboardingCompleted: true }));
+    },
+
+    resetOnboarding: () => {
+      setState(prev => ({ 
+        ...prev, 
+        isOnboardingCompleted: false,
+        // Clear the selected class so user can choose again
+        settings: { ...prev.settings, selectedClassId: undefined }
+      }));
     },
 
     setSchedule: (schedule: Schedule) => {
