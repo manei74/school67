@@ -294,6 +294,9 @@ export default function ScheduleScreen() {
         <ThemedView style={styles.headerContent}>
           <ThemedView>
             <ThemedText type="title">Расписание</ThemedText>
+            <ThemedText style={styles.tagline}>
+              «В приложении — удобно, на доске лицея — точно»
+            </ThemedText>
             {settings.selectedClassId && (
               <ThemedText type="subtitle">
                 {settings.selectedClassId} класс
@@ -488,5 +491,12 @@ const styles = StyleSheet.create({
     color: "#007AFF",
     marginBottom: 4,
     textTransform: "uppercase",
+  },
+  tagline: {
+    fontSize: 12,
+    fontStyle: "italic",
+    color: "#666",
+    marginTop: 2,
+    marginBottom: 4,
   },
 });
