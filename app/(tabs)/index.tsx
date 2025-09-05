@@ -53,8 +53,36 @@ export default function ScheduleScreen() {
     setRefreshing(false);
   };
 
+  const openBugReport = () => {
+    const subject = 'Сообщение об ошибке - Лицей 67 App';
+    const body = `Привет!
+
+Я нашел ошибку в приложении Лицей 67.
+
+ОПИСАНИЕ ОШИБКИ:
+[Опишите, что произошло]
+
+ШАГИ ДЛЯ ВОСПРОИЗВЕДЕНИЯ:
+1. 
+2. 
+3. 
+
+ДОПОЛНИТЕЛЬНАЯ ИНФОРМАЦИЯ:
+• Класс: ${settings.selectedClassId || 'не выбран'}
+• Дата: ${new Date().toLocaleDateString()}
+
+ВАЖНО: Пожалуйста, приложите скриншоты или запись экрана, если возможно.
+
+Спасибо за помощь в улучшении приложения!`;
+
+    const emailUrl = `mailto:maneev.nikita@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    
+    Linking.openURL(emailUrl).catch(() => {
+      Alert.alert('Ошибка', 'Не удалось открыть почтовое приложение');
+    });
+  };
+
   const openSettings = () => {
-    // For now, show an alert with settings options
     Alert.alert(
       'Настройки',
       'Выберите действие',
@@ -64,8 +92,8 @@ export default function ScheduleScreen() {
           onPress: () => showClassSelection(),
         },
         {
-          text: 'Уведомления',
-          onPress: () => Alert.alert('Уведомления', 'Настройки уведомлений'),
+          text: 'Обратная связь',
+          onPress: () => openBugReport(),
         },
         {
           text: 'Отмена',
