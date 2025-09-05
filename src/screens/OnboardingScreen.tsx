@@ -102,17 +102,19 @@ export default function OnboardingScreen() {
           </ThemedText>
           
           <ThemedView style={styles.classGrid}>
-            {classes.map((classItem) => {
-              const isSelected = selectedClassId === classItem.id;
-              console.log(`🔍 Rendering ${classItem.id}: selected=${isSelected} (selectedClassId="${selectedClassId}")`);
+            {classes.map((classItem, index) => {
+              // Ensure we have a valid ID, fallback to index if needed
+              const classId = classItem.id || `class-${index}`;
+              const isSelected = selectedClassId === classId;
+              console.log(`🔍 Rendering ${classId} (${classItem.title}): selected=${isSelected} (selectedClassId="${selectedClassId}")`);
               return (
                 <TouchableOpacity
-                  key={classItem.id}
+                  key={classId}
                   style={[
                     styles.classCard,
                     isSelected && styles.classCardSelected
                   ]}
-                  onPress={() => handleClassSelect(classItem.id)}
+                  onPress={() => handleClassSelect(classId)}
                   activeOpacity={0.7}
                 >
                   <ThemedText style={[

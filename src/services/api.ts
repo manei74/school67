@@ -59,7 +59,16 @@ class ApiService {
       if (response.ok) {
         const apiClasses = await response.json();
         console.log("🔗 API: getClasses from API returning", apiClasses.length, "classes");
-        return apiClasses;
+        console.log("🔗 API: First few classes:", apiClasses.slice(0, 3));
+        
+        // Map API response to our Class format
+        const mappedClasses = apiClasses.map((apiClass: any) => ({
+          id: apiClass.code || apiClass._id || apiClass.id || apiClass.classId,
+          title: apiClass.title || apiClass.name || `${apiClass.grade}${apiClass.letter}` || 'Unknown'
+        }));
+        
+        console.log("🔗 API: Mapped classes:", mappedClasses.slice(0, 3));
+        return mappedClasses;
       }
       
       // Fallback to hardcoded classes if API fails
