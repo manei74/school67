@@ -54,8 +54,16 @@ export default function ScheduleScreen() {
   };
 
   const openBugReport = () => {
-    const subject = 'Сообщение об ошибке - Лицей 67 App';
-    const body = `Привет!
+    Alert.alert(
+      'Обратная связь',
+      'Сейчас откроется почтовое приложение с шаблоном для сообщения об ошибках. Пожалуйста, приложите скриншоты или запись экрана, если возможно.',
+      [
+        { text: 'Отмена', style: 'cancel' },
+        { 
+          text: 'Открыть почту', 
+          onPress: () => {
+            const subject = 'Сообщение об ошибке - Лицей 67 App';
+            const body = `Привет!
 
 Я нашел ошибку в приложении Лицей 67.
 
@@ -75,11 +83,15 @@ export default function ScheduleScreen() {
 
 Спасибо за помощь в улучшении приложения!`;
 
-    const emailUrl = `mailto:maneev.nikita@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    
-    Linking.openURL(emailUrl).catch(() => {
-      Alert.alert('Ошибка', 'Не удалось открыть почтовое приложение');
-    });
+            const emailUrl = `mailto:maneev.nikita@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            
+            Linking.openURL(emailUrl).catch(() => {
+              Alert.alert('Ошибка', 'Не удалось открыть почтовое приложение');
+            });
+          }
+        }
+      ]
+    );
   };
 
   const openSettings = () => {
