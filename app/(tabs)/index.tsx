@@ -79,21 +79,49 @@ export default function ScheduleScreen() {
       const classes = await apiService.getClasses();
       console.log('📚 All classes for selection:', classes);
       
-      // Show all classes directly in a single dialog
-      const buttons = classes.map(cls => ({
-        text: cls.title,
-        onPress: () => {
-          console.log('🎯 Selected class:', cls);
-          setSelectedClass(cls.id);
-          loadTodaySchedule();
-        },
+      // Create a simple string with all classes for debugging
+      const classString = classes.map(c => c.title).join(', ');
+      console.log('📚 All class titles:', classString);
+      
+      // Alert has limitations, so let's try grouping by grade
+      const gradeGroups: { [key: string]: any[] } = {};
+      classes.forEach(cls => {
+        const grade = cls.title.charAt(0);
+        if (!gradeGroups[grade]) gradeGroups[grade] = [];
+        gradeGroups[grade].push(cls);
+      });
+      
+      console.log('📚 Grade groups:', Object.keys(gradeGroups));
+      
+      // Show grade selection first (limited buttons)
+      const gradeButtons = Object.keys(gradeGroups).sort().map(grade => ({
+        text: `${grade} класс`,
+        onPress: () => showClassesForGrade(gradeGroups[grade], grade),
       }));
-      buttons.push({ text: 'Отмена', style: 'cancel' });
+      gradeButtons.push({ text: 'Отмена', style: 'cancel' });
 
-      Alert.alert('Выберите класс', `Доступно ${classes.length} классов:`, buttons);
+      Alert.alert('Выберите параллель', `Всего ${classes.length} классов`, gradeButtons);
     } catch (error) {
       Alert.alert('Ошибка', 'Не удалось загрузить список классов');
     }
+  };
+
+  const showClassesForGrade = (classesInGrade: any[], grade: string) => {
+    console.log(`📚 Classes in grade ${grade}:`, classesInGrade);
+    const buttons = classesInGrade.map(cls => ({
+      text: cls.title,
+      onPress: () => {
+        console.log('🎯 Selected class:', cls);
+        setSelectedClass(cls.id);
+        loadTodaySchedule();
+      },
+    }));
+    buttons.push({ 
+      text: 'Назад', 
+      onPress: () => showClassSelection(),
+    });
+    
+    Alert.alert(`${grade} класс`, `Выберите класс из ${classesInGrade.length} доступных:`, buttons);
   };
 
   const renderTabButton = (tab: ScheduleTab, label: string, icon: string) => (
