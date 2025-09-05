@@ -44,14 +44,19 @@ export default function OnboardingScreen() {
     setSelectedClassId(classId);
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (!selectedClassId) {
       Alert.alert("Внимание", "Пожалуйста, выберите ваш класс");
       return;
     }
 
-    setSelectedClass(selectedClassId);
-    completeOnboarding();
+    try {
+      await setSelectedClass(selectedClassId);
+      await completeOnboarding();
+    } catch (error) {
+      console.error('Error saving class selection:', error);
+      Alert.alert("Ошибка", "Не удалось сохранить выбор класса");
+    }
   };
 
   const handleSkip = () => {
@@ -66,7 +71,13 @@ export default function OnboardingScreen() {
         {
           text: "Пропустить",
           style: "destructive",
-          onPress: () => completeOnboarding(),
+          onPress: async () => {
+            try {
+              await completeOnboarding();
+            } catch (error) {
+              console.error('Error skipping onboarding:', error);
+            }
+          },
         },
       ]
     );

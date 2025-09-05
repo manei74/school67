@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { AppSettings, Class, Schedule, Olympiad, Holiday } from '../types';
+import { StorageService, STORAGE_KEYS } from '../utils/storage';
 
 interface AppState {
   settings: AppSettings;
@@ -15,10 +16,10 @@ interface AppState {
 }
 
 interface AppActions {
-  updateSettings: (settings: Partial<AppSettings>) => void;
-  setSelectedClass: (classId: string) => void;
-  completeOnboarding: () => void;
-  resetOnboarding: () => void;
+  updateSettings: (settings: Partial<AppSettings>) => Promise<void>;
+  setSelectedClass: (classId: string) => Promise<void>;
+  completeOnboarding: () => Promise<void>;
+  resetOnboarding: () => Promise<void>;
   setSchedule: (schedule: Schedule) => void;
   setWeekSchedule: (schedules: Schedule[]) => void;
   setOlympiads: (olympiads: Olympiad[]) => void;
@@ -51,34 +52,98 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     lastSync: null,
   });
 
+  // Load persisted data on initialization
+  useEffect(() => {
+    const loadPersistedData = async () => {
+      try {
+        console.log('📱 Loading persisted data...');
+        
+        // Load settings
+        const savedSettings = await StorageService.getItem<AppSettings>(STORAGE_KEYS.APP_SETTINGS);
+        if (savedSettings) {
+          console.log('📱 Loaded settings:', savedSettings);
+          setState(prev => ({
+            ...prev,
+            settings: { ...prev.settings, ...savedSettings }
+          }));
+        }
+
+        // Load onboarding status
+        const onboardingCompleted = await StorageService.getItem<boolean>(STORAGE_KEYS.ONBOARDING_COMPLETED);
+        if (onboardingCompleted !== null) {
+          console.log('📱 Loaded onboarding status:', onboardingCompleted);
+          setState(prev => ({
+            ...prev,
+            isOnboardingCompleted: onboardingCompleted
+          }));
+        }
+      } catch (error) {
+        console.error('📱 Error loading persisted data:', error);
+      }
+    };
+
+    loadPersistedData();
+  }, []);
+
   console.log('🏪 AppProvider state:', state);
 
   const actions: AppActions = {
-    updateSettings: (newSettings: Partial<AppSettings>) => {
+    updateSettings: async (newSettings: Partial<AppSettings>) => {
+      const updatedSettings = { ...state.settings, ...newSettings };
       setState(prev => ({
         ...prev,
-        settings: { ...prev.settings, ...newSettings }
+        settings: updatedSettings
       }));
+      // Persist to AsyncStorage
+      try {
+        await StorageService.setItem(STORAGE_KEYS.APP_SETTINGS, updatedSettings);
+        console.log('📱 Settings saved to storage:', updatedSettings);
+      } catch (error) {
+        console.error('📱 Error saving settings:', error);
+      }
     },
 
-    setSelectedClass: (classId: string) => {
+    setSelectedClass: async (classId: string) => {
+      const updatedSettings = { ...state.settings, selectedClassId: classId };
       setState(prev => ({
         ...prev,
-        settings: { ...prev.settings, selectedClassId: classId }
+        settings: updatedSettings
       }));
+      // Persist to AsyncStorage
+      try {
+        await StorageService.setItem(STORAGE_KEYS.APP_SETTINGS, updatedSettings);
+        console.log('📱 Selected class saved to storage:', classId);
+      } catch (error) {
+        console.error('📱 Error saving selected class:', error);
+      }
     },
 
-    completeOnboarding: () => {
+    completeOnboarding: async () => {
       setState(prev => ({ ...prev, isOnboardingCompleted: true }));
+      // Persist to AsyncStorage
+      try {
+        await StorageService.setItem(STORAGE_KEYS.ONBOARDING_COMPLETED, true);
+        console.log('📱 Onboarding completion saved to storage');
+      } catch (error) {
+        console.error('📱 Error saving onboarding status:', error);
+      }
     },
 
-    resetOnboarding: () => {
+    resetOnboarding: async () => {
+      const clearedSettings = { ...state.settings, selectedClassId: undefined };
       setState(prev => ({ 
         ...prev, 
         isOnboardingCompleted: false,
-        // Clear the selected class so user can choose again
-        settings: { ...prev.settings, selectedClassId: undefined }
+        settings: clearedSettings
       }));
+      // Persist to AsyncStorage
+      try {
+        await StorageService.setItem(STORAGE_KEYS.ONBOARDING_COMPLETED, false);
+        await StorageService.setItem(STORAGE_KEYS.APP_SETTINGS, clearedSettings);
+        console.log('📱 Onboarding reset and settings cleared');
+      } catch (error) {
+        console.error('📱 Error resetting onboarding:', error);
+      }
     },
 
     setSchedule: (schedule: Schedule) => {

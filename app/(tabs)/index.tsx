@@ -125,9 +125,13 @@ export default function ScheduleScreen() {
         { text: "Отмена", style: "cancel" },
         {
           text: "Продолжить",
-          onPress: () => {
+          onPress: async () => {
             console.log("🔄 Resetting onboarding to show class selection");
-            resetOnboarding();
+            try {
+              await resetOnboarding();
+            } catch (error) {
+              console.error('Error resetting onboarding:', error);
+            }
           },
         },
       ]
