@@ -239,6 +239,11 @@ export default function ScheduleScreen() {
 
   return (
     <ThemedView style={styles.container}>
+      {/* Settings button positioned absolutely at top right */}
+      <TouchableOpacity onPress={openSettings} style={styles.settingsButtonFloat}>
+        <IconSymbol size={24} name="gearshape" color="#333" />
+      </TouchableOpacity>
+
       <ThemedView style={styles.header}>
         <ThemedView style={styles.headerContent}>
           <ThemedView>
@@ -247,9 +252,6 @@ export default function ScheduleScreen() {
               <ThemedText type="subtitle">{settings.selectedClassId} класс</ThemedText>
             )}
           </ThemedView>
-          <TouchableOpacity onPress={openSettings} style={styles.settingsButton}>
-            <IconSymbol size={24} name="gearshape" color="#333" />
-          </TouchableOpacity>
         </ThemedView>
       </ThemedView>
 
@@ -292,6 +294,23 @@ const styles = StyleSheet.create({
   settingsButton: {
     padding: 8,
     borderRadius: 8,
+  },
+  settingsButtonFloat: {
+    position: 'absolute',
+    top: 60,
+    right: 16,
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: 'rgba(248, 249, 250, 0.9)',
+    zIndex: 999,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 5,
   },
   tabContainer: {
     borderBottomWidth: 1,
