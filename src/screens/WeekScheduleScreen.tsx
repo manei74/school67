@@ -123,7 +123,7 @@ export default function WeekScheduleScreen() {
                           {lesson.parts && lesson.parts.length > 0 ? (
                             lesson.parts.map((part, index) => (
                               <View key={index} style={lesson.parts.length > 1 ? styles.lessonPart : undefined}>
-                                {lesson.parts.length > 1 && part.subgroup && (
+                                {part.subgroup && (
                                   <ThemedText style={styles.subgroupLabel}>{part.subgroup}</ThemedText>
                                 )}
                                 <ThemedText type="defaultSemiBold" style={styles.lessonSubject}>

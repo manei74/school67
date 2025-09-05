@@ -12,7 +12,6 @@ import {
 interface Pamphlet {
   id: string;
   title: string;
-  description: string;
   icon: string;
   type: "pdf" | "html";
   url?: string;
@@ -23,7 +22,6 @@ const PAMPHLETS: Pamphlet[] = [
   {
     id: "1",
     title: "Положение о школьной форме",
-    description: "Требования к внешнему виду учащихся лицея",
     icon: "👔",
     type: "pdf",
     url: "https://chel67.ru/wp-content/uploads/2025/02/%D0%9F%D0%BE%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE-%D0%B2%D0%BD%D0%B5%D1%88%D0%BD%D0%B5%D0%BC-%D0%B2%D0%B8%D0%B4%D0%B5-%D0%BE%D0%B1%D1%83%D1%87%D0%B0%D1%8E%D1%89%D0%B8%D1%85%D1%81%D1%8F_2025.pdf",
@@ -31,10 +29,72 @@ const PAMPHLETS: Pamphlet[] = [
   {
     id: "2",
     title: "Правила поведения учащихся",
-    description: "Правила внутреннего распорядка для учеников",
     icon: "📋",
     type: "pdf",
     url: "https://chel67.ru/wp-content/uploads/2025/02/%D0%9F%D1%80%D0%B0%D0%B2%D0%B8%D0%BB%D0%B0-%D0%B2%D0%BD%D1%83%D1%82%D1%80%D0%B5%D0%BD%D0%BD%D0%B5%D0%B3%D0%BE-%D1%80%D0%B0%D1%81%D0%BF%D0%BE%D1%80%D1%8F%D0%B4%D0%BA%D0%B0-%D0%B4%D0%BB%D1%8F-%D1%83%D1%87%D0%B0%D1%89%D0%B8%D1%85%D1%81%D1%8F_2025.pdf",
+  },
+  {
+    id: "3",
+    title: "Безопасное поведение в школе",
+    icon: "🏫",
+    type: "pdf",
+    url: "https://disk.yandex.ru/i/z_n_tfIveiGH_g",
+  },
+  {
+    id: "4",
+    title: "Личная безопасность",
+    icon: "🛡️",
+    type: "pdf",
+    url: "https://disk.yandex.ru/i/LyeXVh_hyBsSyg",
+  },
+  {
+    id: "5",
+    title: "Безопасное поведение дома",
+    icon: "🏠",
+    type: "pdf",
+    url: "https://disk.yandex.ru/i/W7_JiWqBeh19Cg",
+  },
+  {
+    id: "6",
+    title: "Электробезопасность",
+    icon: "🔌",
+    type: "pdf",
+    url: "https://disk.yandex.ru/i/bmqmgvV-SoDMww",
+  },
+  {
+    id: "7",
+    title: "Пожарная безопасность",
+    icon: "🚒",
+    type: "pdf",
+    url: "https://disk.yandex.ru/i/2X1w28n5iDbR3w",
+  },
+  {
+    id: "8",
+    title: "Как вести себя при пожаре",
+    icon: "🚪",
+    type: "pdf",
+    url: "https://disk.yandex.ru/i/ZmRzht6l-VyBWw",
+  },
+  {
+    id: "9",
+    title: "Дорожная безопасность",
+    icon: "🚗",
+    type: "pdf",
+    url: "https://disk.yandex.ru/i/ZmRzht6l-VyBWw",
+  },
+  {
+    id: "10",
+    title: "О правилах дорожной безопасности",
+    icon: "🚦",
+    type: "pdf",
+    url: "https://disk.yandex.ru/i/-O2SO47NOOM_ZQ",
+  },
+  {
+    id: "11",
+    title: "Безопасное поведение на льду",
+    icon: "🧊",
+    type: "pdf",
+    url: "https://disk.yandex.ru/i/aWkY97gxBhVZJQ",
   },
 ];
 
@@ -89,9 +149,6 @@ export default function PamphletsScreen() {
                     style={styles.pamphletTitle}
                   >
                     {pamphlet.title}
-                  </ThemedText>
-                  <ThemedText style={styles.pamphletDescription}>
-                    {pamphlet.description}
                   </ThemedText>
                 </ThemedView>
               </ThemedView>
@@ -166,12 +223,13 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   pamphletHeader: {
+    padding: 10,
     flexDirection: "row",
     alignItems: "flex-start",
-    marginBottom: 16,
+    marginBottom: 0,
   },
   pamphletIcon: {
-    fontSize: 32,
+    fontSize: 20,
     marginRight: 16,
   },
   pamphletInfo: {
@@ -179,10 +237,6 @@ const styles = StyleSheet.create({
   },
   pamphletTitle: {
     marginBottom: 4,
-  },
-  pamphletDescription: {
-    color: "#666",
-    lineHeight: 20,
   },
   pamphletFooter: {
     flexDirection: "row",

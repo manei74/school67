@@ -1,49 +1,52 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { useAppStore } from '../store/simpleStore';
-import { apiService } from '../services/api';
-import { Class } from '../types';
-import DebugOverlay from '../components/DebugOverlay';
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import React, { useEffect, useState } from "react";
+import { Alert, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { apiService } from "../services/api";
+import { useAppStore } from "../store/simpleStore";
+import { Class } from "../types";
 
 export default function OnboardingScreen() {
-  console.log('👋 OnboardingScreen starting');
-  
+  console.log("👋 OnboardingScreen starting");
+
   const { completeOnboarding, setSelectedClass } = useAppStore();
   const [classes, setClasses] = useState<Class[]>([]);
-  const [selectedClassId, setSelectedClassId] = useState<string>('');
+  const [selectedClassId, setSelectedClassId] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
 
-  console.log('👋 OnboardingScreen state:', { classes: classes.length, selectedClassId, isLoading });
+  console.log("👋 OnboardingScreen state:", {
+    classes: classes.length,
+    selectedClassId,
+    isLoading,
+  });
 
   useEffect(() => {
     loadClasses();
   }, []);
 
   const loadClasses = async () => {
-    console.log('📚 Loading classes...');
+    console.log("📚 Loading classes...");
     try {
       const classesData = await apiService.getClasses();
-      console.log('📚 Classes loaded:', classesData.length);
+      console.log("📚 Classes loaded:", classesData.length);
       setClasses(classesData);
     } catch (error) {
-      console.error('❌ Failed to load classes:', error);
-      Alert.alert('Ошибка', 'Не удалось загрузить список классов');
+      console.error("❌ Failed to load classes:", error);
+      Alert.alert("Ошибка", "Не удалось загрузить список классов");
     } finally {
-      console.log('📚 Classes loading finished');
+      console.log("📚 Classes loading finished");
       setIsLoading(false);
     }
   };
 
   const handleClassSelect = (classId: string) => {
-    console.log('🎯 Class selected:', classId);
+    console.log("🎯 Class selected:", classId);
     setSelectedClassId(classId);
   };
 
   const handleContinue = () => {
     if (!selectedClassId) {
-      Alert.alert('Внимание', 'Пожалуйста, выберите ваш класс');
+      Alert.alert("Внимание", "Пожалуйста, выберите ваш класс");
       return;
     }
 
@@ -53,16 +56,16 @@ export default function OnboardingScreen() {
 
   const handleSkip = () => {
     Alert.alert(
-      'Пропустить выбор класса?',
-      'Вы сможете выбрать класс позже в настройках. Некоторые функции будут недоступны без указания класса.',
+      "Пропустить выбор класса?",
+      "Вы сможете выбрать класс позже в настройках. Некоторые функции будут недоступны без указания класса.",
       [
         {
-          text: 'Отмена',
-          style: 'cancel',
+          text: "Отмена",
+          style: "cancel",
         },
         {
-          text: 'Пропустить',
-          style: 'destructive',
+          text: "Пропустить",
+          style: "destructive",
           onPress: () => completeOnboarding(),
         },
       ]
@@ -70,10 +73,9 @@ export default function OnboardingScreen() {
   };
 
   if (isLoading) {
-    console.log('⏳ OnboardingScreen showing loading');
+    console.log("⏳ OnboardingScreen showing loading");
     return (
       <ThemedView style={styles.container}>
-        <DebugOverlay step="Loading Classes" details={`Classes: ${classes.length}`} />
         <ThemedView style={styles.loadingContainer}>
           <ThemedText>Загрузка...</ThemedText>
         </ThemedView>
@@ -81,46 +83,53 @@ export default function OnboardingScreen() {
     );
   }
 
-  console.log('✅ OnboardingScreen showing main UI');
+  console.log("✅ OnboardingScreen showing main UI");
 
   return (
     <ThemedView style={styles.container}>
-      <DebugOverlay step="Onboarding Ready" details={`Classes: ${classes.length}, Selected: ${selectedClassId || 'none'}`} />
       <ThemedView style={styles.header}>
         <ThemedText type="title" style={styles.title}>
           Добро пожаловать в Лицей 67!
         </ThemedText>
         <ThemedText style={styles.subtitle}>
-          Выберите ваш класс для персонализации расписания и получения актуальной информации
+          Выберите ваш класс для персонализации расписания и получения
+          актуальной информации
         </ThemedText>
       </ThemedView>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
         <ThemedView style={styles.classesContainer}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Выберите ваш класс:
           </ThemedText>
-          
+
           <ThemedView style={styles.classGrid}>
             {classes.map((classItem, index) => {
               // Ensure we have a valid ID, fallback to index if needed
               const classId = classItem.id || `class-${index}`;
               const isSelected = selectedClassId === classId;
-              console.log(`🔍 Rendering ${classId} (${classItem.title}): selected=${isSelected} (selectedClassId="${selectedClassId}")`);
+              console.log(
+                `🔍 Rendering ${classId} (${classItem.title}): selected=${isSelected} (selectedClassId="${selectedClassId}")`
+              );
               return (
                 <TouchableOpacity
                   key={classId}
                   style={[
                     styles.classCard,
-                    isSelected && styles.classCardSelected
+                    isSelected && styles.classCardSelected,
                   ]}
                   onPress={() => handleClassSelect(classId)}
                   activeOpacity={0.7}
                 >
-                  <ThemedText style={[
-                    styles.classText,
-                    isSelected && styles.classTextSelected
-                  ]}>
+                  <ThemedText
+                    style={[
+                      styles.classText,
+                      isSelected && styles.classTextSelected,
+                    ]}
+                  >
                     {classItem.title}
                   </ThemedText>
                 </TouchableOpacity>
@@ -134,9 +143,7 @@ export default function OnboardingScreen() {
             ℹ️ После выбора класса вы сможете:
           </ThemedText>
           <ThemedText style={styles.featureText}>
-            • Просматривать актуальное расписание{'\n'}
-            • Получать уведомления об олимпиадах{'\n'}
-            • Видеть информацию, относящуюся к вашему классу
+            • Просматривать актуальное расписание
           </ThemedText>
           <ThemedText style={styles.changeText}>
             Вы всегда можете изменить класс в настройках приложения.
@@ -146,22 +153,18 @@ export default function OnboardingScreen() {
 
       <ThemedView style={styles.footer}>
         <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
-          <ThemedText style={styles.skipButtonText}>
-            Пропустить
-          </ThemedText>
+          <ThemedText style={styles.skipButtonText}>Пропустить</ThemedText>
         </TouchableOpacity>
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           style={[
             styles.continueButton,
-            !selectedClassId && styles.continueButtonDisabled
-          ]} 
+            !selectedClassId && styles.continueButtonDisabled,
+          ]}
           onPress={handleContinue}
           disabled={!selectedClassId}
         >
-          <ThemedText style={styles.continueButtonText}>
-            Продолжить
-          </ThemedText>
+          <ThemedText style={styles.continueButtonText}>Продолжить</ThemedText>
         </TouchableOpacity>
       </ThemedView>
     </ThemedView>
@@ -175,21 +178,21 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   header: {
     paddingHorizontal: 24,
     paddingVertical: 32,
-    alignItems: 'center',
+    alignItems: "center",
   },
   title: {
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 16,
   },
   subtitle: {
-    textAlign: 'center',
-    color: '#666',
+    textAlign: "center",
+    color: "#666",
     lineHeight: 22,
   },
   scrollView: {
@@ -201,95 +204,95 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   classGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
     gap: 12,
   },
   classCard: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: "#f8f9fa",
     borderWidth: 2,
-    borderColor: '#e0e0e0',
+    borderColor: "#e0e0e0",
     borderRadius: 12,
     padding: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minWidth: '30%',
+    alignItems: "center",
+    justifyContent: "center",
+    minWidth: "30%",
     flex: 1,
-    maxWidth: '31%',
+    maxWidth: "31%",
   },
   classCardSelected: {
-    backgroundColor: '#E3F2FD',
-    borderColor: '#2196F3',
+    backgroundColor: "#E3F2FD",
+    borderColor: "#2196F3",
   },
   classText: {
     fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
+    fontWeight: "600",
+    color: "#333",
   },
   classTextSelected: {
-    color: '#2196F3',
+    color: "#2196F3",
   },
   infoContainer: {
     paddingHorizontal: 24,
     paddingVertical: 24,
-    backgroundColor: '#f0f7ff',
+    backgroundColor: "#f0f7ff",
     marginHorizontal: 24,
     marginVertical: 16,
     borderRadius: 12,
   },
   infoText: {
     marginBottom: 12,
-    color: '#1976D2',
-    fontWeight: '600',
+    color: "#1976D2",
+    fontWeight: "600",
   },
   featureText: {
-    color: '#666',
+    color: "#666",
     lineHeight: 20,
     marginBottom: 12,
   },
   changeText: {
-    color: '#666',
+    color: "#666",
     fontSize: 14,
-    fontStyle: 'italic',
+    fontStyle: "italic",
   },
   footer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     paddingHorizontal: 24,
     paddingVertical: 24,
     gap: 12,
     borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
+    borderTopColor: "#e0e0e0",
   },
   skipButton: {
     flex: 1,
     paddingVertical: 16,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#ccc',
-    alignItems: 'center',
+    borderColor: "#ccc",
+    alignItems: "center",
   },
   skipButtonText: {
-    color: '#666',
+    color: "#666",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   continueButton: {
     flex: 2,
-    backgroundColor: '#2196F3',
+    backgroundColor: "#2196F3",
     paddingVertical: 16,
     borderRadius: 12,
-    alignItems: 'center',
+    alignItems: "center",
   },
   continueButtonDisabled: {
-    backgroundColor: '#ccc',
+    backgroundColor: "#ccc",
   },
   continueButtonText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });
