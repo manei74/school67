@@ -37,6 +37,7 @@ export default function OnboardingScreen() {
   };
 
   const handleClassSelect = (classId: string) => {
+    console.log('🎯 Class selected:', classId);
     setSelectedClassId(classId);
   };
 
@@ -101,24 +102,28 @@ export default function OnboardingScreen() {
           </ThemedText>
           
           <ThemedView style={styles.classGrid}>
-            {classes.map((classItem) => (
-              <TouchableOpacity
-                key={classItem.id}
-                style={[
-                  styles.classCard,
-                  selectedClassId === classItem.id && styles.classCardSelected
-                ]}
-                onPress={() => handleClassSelect(classItem.id)}
-                activeOpacity={0.7}
-              >
-                <ThemedText style={[
-                  styles.classText,
-                  selectedClassId === classItem.id && styles.classTextSelected
-                ]}>
-                  {classItem.title}
-                </ThemedText>
-              </TouchableOpacity>
-            ))}
+            {classes.map((classItem) => {
+              const isSelected = selectedClassId === classItem.id;
+              console.log(`🔍 Rendering ${classItem.id}: selected=${isSelected} (selectedClassId="${selectedClassId}")`);
+              return (
+                <TouchableOpacity
+                  key={classItem.id}
+                  style={[
+                    styles.classCard,
+                    isSelected && styles.classCardSelected
+                  ]}
+                  onPress={() => handleClassSelect(classItem.id)}
+                  activeOpacity={0.7}
+                >
+                  <ThemedText style={[
+                    styles.classText,
+                    isSelected && styles.classTextSelected
+                  ]}>
+                    {classItem.title}
+                  </ThemedText>
+                </TouchableOpacity>
+              );
+            })}
           </ThemedView>
         </ThemedView>
 
