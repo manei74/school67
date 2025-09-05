@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { StyleSheet, ScrollView, RefreshControl } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import React, { useEffect, useState } from "react";
+import { RefreshControl, ScrollView, StyleSheet } from "react-native";
 
 const schoolCalendarData = {
   academicYear: {
@@ -140,7 +140,6 @@ const schoolCalendarData = {
 export default function CalendarScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [daysUntilHoliday, setDaysUntilHoliday] = useState<number | null>(null);
-  const [nextHoliday, setNextHoliday] = useState<string>("");
 
   useEffect(() => {
     loadCalendarData();
@@ -155,7 +154,6 @@ export default function CalendarScreen() {
 
     if (daysDiff > 0) {
       setDaysUntilHoliday(daysDiff);
-      setNextHoliday("Осенние каникулы");
     }
   };
 
@@ -186,14 +184,20 @@ export default function CalendarScreen() {
             <>
               <ThemedText type="title" style={styles.counterNumber}>
                 {daysUntilHoliday}{" "}
-                {daysUntilHoliday === 1
-                  ? "день"
-                  : daysUntilHoliday < 5
-                  ? "дня"
-                  : "дней"}
-              </ThemedText>
-              <ThemedText style={styles.counterSubtitle}>
-                {nextHoliday}
+                {(() => {
+                  const lastDigit = daysUntilHoliday % 10;
+                  const lastTwoDigits = daysUntilHoliday % 100;
+                  
+                  if (lastTwoDigits >= 11 && lastTwoDigits <= 14) {
+                    return "дней";
+                  } else if (lastDigit === 1) {
+                    return "день";
+                  } else if (lastDigit >= 2 && lastDigit <= 4) {
+                    return "дня";
+                  } else {
+                    return "дней";
+                  }
+                })()}
               </ThemedText>
             </>
           ) : (
@@ -211,7 +215,7 @@ export default function CalendarScreen() {
         {/* Terms */}
         <ThemedView style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
-            👩‍🏫 Деление учебного года
+            Деление учебного года
           </ThemedText>
           <ThemedView style={styles.infoCard}>
             <ThemedText type="defaultSemiBold" style={styles.termTitle}>
@@ -431,6 +435,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     marginBottom: 16,
+    textAlign: "center",
   },
   infoCard: {
     backgroundColor: "#f8f9fa",
