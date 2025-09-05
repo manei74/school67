@@ -134,7 +134,7 @@ export default function ScheduleScreen() {
           <ThemedText style={styles.emptyText}>
             Для просмотра расписания необходимо выбрать класс в настройках
           </ThemedText>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={showClassSelection}>
             <ThemedText style={styles.buttonText}>Выбрать класс</ThemedText>
           </TouchableOpacity>
         </ThemedView>
