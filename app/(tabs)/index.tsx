@@ -77,43 +77,23 @@ export default function ScheduleScreen() {
   const showClassSelection = async () => {
     try {
       const classes = await apiService.getClasses();
+      console.log('📚 All classes for selection:', classes);
       
-      // Group classes by grade for better organization
-      const gradeGroups: { [key: string]: string[] } = {};
-      classes.forEach(cls => {
-        const grade = cls.title.charAt(0);
-        if (!gradeGroups[grade]) gradeGroups[grade] = [];
-        gradeGroups[grade].push(cls.title);
-      });
-      
-      // Show grade selection first
-      const gradeButtons = Object.keys(gradeGroups).sort().map(grade => ({
-        text: `${grade} класс (${gradeGroups[grade].join(', ')})`,
-        onPress: () => showClassesForGrade(classes, grade),
+      // Show all classes directly in a single dialog
+      const buttons = classes.map(cls => ({
+        text: cls.title,
+        onPress: () => {
+          console.log('🎯 Selected class:', cls);
+          setSelectedClass(cls.id);
+          loadTodaySchedule();
+        },
       }));
-      gradeButtons.push({ text: 'Отмена', style: 'cancel' });
-      
-      Alert.alert('Выберите класс', 'Выберите параллель:', gradeButtons);
+      buttons.push({ text: 'Отмена', style: 'cancel' });
+
+      Alert.alert('Выберите класс', `Доступно ${classes.length} классов:`, buttons);
     } catch (error) {
       Alert.alert('Ошибка', 'Не удалось загрузить список классов');
     }
-  };
-
-  const showClassesForGrade = (allClasses: any[], grade: string) => {
-    const classesInGrade = allClasses.filter(cls => cls.title.charAt(0) === grade);
-    const buttons = classesInGrade.map(cls => ({
-      text: cls.title,
-      onPress: () => {
-        setSelectedClass(cls.id);
-        loadTodaySchedule();
-      },
-    }));
-    buttons.push({ 
-      text: 'Назад', 
-      onPress: () => showClassSelection(),
-    });
-    
-    Alert.alert(`${grade} класс`, 'Выберите класс:', buttons);
   };
 
   const renderTabButton = (tab: ScheduleTab, label: string, icon: string) => (
@@ -241,7 +221,7 @@ export default function ScheduleScreen() {
     <ThemedView style={styles.container}>
       {/* Settings button positioned absolutely at top right */}
       <TouchableOpacity onPress={openSettings} style={styles.settingsButtonFloat}>
-        <IconSymbol size={24} name="gearshape" color="#333" />
+        <ThemedText style={styles.settingsIcon}>⚙️</ThemedText>
       </TouchableOpacity>
 
       <ThemedView style={styles.header}>
@@ -311,6 +291,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 4,
     elevation: 5,
+  },
+  settingsIcon: {
+    fontSize: 20,
   },
   tabContainer: {
     borderBottomWidth: 1,
