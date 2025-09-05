@@ -54,6 +54,19 @@ class ApiService {
       // For now, return hardcoded classes from DATABASE_GUIDE.md
       // In production, this would fetch from /classes endpoint
       const classes: Class[] = [
+        { id: "1a", title: "1А" },
+        { id: "1b", title: "1Б" },
+        { id: "1v", title: "1В" },
+        { id: "2a", title: "2А" },
+        { id: "2b", title: "2Б" },
+        { id: "2v", title: "2В" },
+        { id: "2g", title: "2Г" },
+        { id: "3a", title: "3А" },
+        { id: "3b", title: "3Б" },
+        { id: "3v", title: "3В" },
+        { id: "4a", title: "4А" },
+        { id: "4b", title: "4Б" },
+        { id: "4v", title: "4В" },
         { id: "5a", title: "5А" },
         { id: "5b", title: "5Б" },
         { id: "5v", title: "5В" },

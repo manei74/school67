@@ -77,19 +77,43 @@ export default function ScheduleScreen() {
   const showClassSelection = async () => {
     try {
       const classes = await apiService.getClasses();
-      const buttons = classes.map(cls => ({
-        text: cls.title,
-        onPress: () => {
-          setSelectedClass(cls.id);
-          loadTodaySchedule();
-        },
+      
+      // Group classes by grade for better organization
+      const gradeGroups: { [key: string]: string[] } = {};
+      classes.forEach(cls => {
+        const grade = cls.title.charAt(0);
+        if (!gradeGroups[grade]) gradeGroups[grade] = [];
+        gradeGroups[grade].push(cls.title);
+      });
+      
+      // Show grade selection first
+      const gradeButtons = Object.keys(gradeGroups).sort().map(grade => ({
+        text: `${grade} класс (${gradeGroups[grade].join(', ')})`,
+        onPress: () => showClassesForGrade(classes, grade),
       }));
-      buttons.push({ text: 'Отмена', style: 'cancel' });
-
-      Alert.alert('Выберите класс', '', buttons);
+      gradeButtons.push({ text: 'Отмена', style: 'cancel' });
+      
+      Alert.alert('Выберите класс', 'Выберите параллель:', gradeButtons);
     } catch (error) {
       Alert.alert('Ошибка', 'Не удалось загрузить список классов');
     }
+  };
+
+  const showClassesForGrade = (allClasses: any[], grade: string) => {
+    const classesInGrade = allClasses.filter(cls => cls.title.charAt(0) === grade);
+    const buttons = classesInGrade.map(cls => ({
+      text: cls.title,
+      onPress: () => {
+        setSelectedClass(cls.id);
+        loadTodaySchedule();
+      },
+    }));
+    buttons.push({ 
+      text: 'Назад', 
+      onPress: () => showClassSelection(),
+    });
+    
+    Alert.alert(`${grade} класс`, 'Выберите класс:', buttons);
   };
 
   const renderTabButton = (tab: ScheduleTab, label: string, icon: string) => (
@@ -224,7 +248,7 @@ export default function ScheduleScreen() {
             )}
           </ThemedView>
           <TouchableOpacity onPress={openSettings} style={styles.settingsButton}>
-            <IconSymbol size={24} name="gearshape" color="#666" />
+            <IconSymbol size={24} name="gearshape" color="#333" />
           </TouchableOpacity>
         </ThemedView>
       </ThemedView>
