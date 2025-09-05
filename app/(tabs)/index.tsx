@@ -8,6 +8,7 @@ import { apiService } from "@/src/services/api";
 import { useAppStore } from "@/src/store/simpleStore";
 import { formatClassName } from "@/src/utils/classUtils";
 import { checkForUpdatesManually } from "@/src/components/UpdateChecker";
+import SettingsModal from "@/src/components/SettingsModal";
 import React, { useEffect, useState } from "react";
 import {
   Alert,
@@ -35,6 +36,7 @@ export default function ScheduleScreen() {
 
   const [refreshing, setRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState<ScheduleTab>("today");
+  const [settingsModalVisible, setSettingsModalVisible] = useState(false);
 
   useEffect(() => {
     if (isOnboardingCompleted && settings.selectedClassId) {
@@ -110,24 +112,7 @@ export default function ScheduleScreen() {
   };
 
   const openSettings = () => {
-    Alert.alert("Настройки", "Выберите действие", [
-      {
-        text: "Сменить класс",
-        onPress: () => showClassSelection(),
-      },
-      {
-        text: "Проверить обновления",
-        onPress: () => checkForUpdatesManually(),
-      },
-      {
-        text: "Обратная связь",
-        onPress: () => openBugReport(),
-      },
-      {
-        text: "Отмена",
-        style: "cancel",
-      },
-    ]);
+    setSettingsModalVisible(true);
   };
 
   const showClassSelection = () => {
@@ -328,6 +313,15 @@ export default function ScheduleScreen() {
 
       {/* Content */}
       {renderContent()}
+
+      {/* Settings Modal */}
+      <SettingsModal
+        visible={settingsModalVisible}
+        onClose={() => setSettingsModalVisible(false)}
+        onChangeClass={showClassSelection}
+        onCheckUpdates={checkForUpdatesManually}
+        onBugReport={openBugReport}
+      />
     </ThemedView>
   );
 }
