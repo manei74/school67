@@ -6,6 +6,7 @@ import SchoolNavigationScreen from "@/src/screens/SchoolNavigationScreen";
 import WeekScheduleScreen from "@/src/screens/WeekScheduleScreen";
 import { apiService } from "@/src/services/api";
 import { useAppStore } from "@/src/store/simpleStore";
+import { formatClassName } from "@/src/utils/classUtils";
 import React, { useEffect, useState } from "react";
 import {
   Alert,
@@ -87,7 +88,7 @@ export default function ScheduleScreen() {
 3. 
 
 ДОПОЛНИТЕЛЬНАЯ ИНФОРМАЦИЯ:
-• Класс: ${settings.selectedClassId || "не выбран"}
+• Класс: ${settings.selectedClassId ? formatClassName(settings.selectedClassId) : "не выбран"}
 • Дата: ${new Date().toLocaleDateString()}
 
 ВАЖНО: Пожалуйста, приложите скриншоты или запись экрана, если возможно.
@@ -299,7 +300,7 @@ export default function ScheduleScreen() {
             </ThemedText>
             {settings.selectedClassId && (
               <ThemedText type="subtitle">
-                {settings.selectedClassId} класс
+                {formatClassName(settings.selectedClassId)} класс
               </ThemedText>
             )}
           </ThemedView>
