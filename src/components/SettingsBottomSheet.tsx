@@ -6,9 +6,10 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
+  Pressable,
 } from "react-native";
 
-interface SettingsModalProps {
+interface SettingsBottomSheetProps {
   visible: boolean;
   onClose: () => void;
   onChangeClass: () => void;
@@ -16,23 +17,23 @@ interface SettingsModalProps {
   onBugReport: () => void;
 }
 
-export default function SettingsModal({
+export default function SettingsBottomSheet({
   visible,
   onClose,
   onChangeClass,
   onCheckUpdates,
   onBugReport,
-}: SettingsModalProps) {
+}: SettingsBottomSheetProps) {
   return (
     <Modal
       transparent={true}
       visible={visible}
-      animationType="fade"
+      animationType="slide"
       onRequestClose={onClose}
     >
-      <View style={styles.overlay}>
-        <ThemedView style={styles.modalContainer}>
-          {/* Header with close button */}
+      <Pressable style={styles.overlay} onPress={onClose}>
+        <View style={styles.bottomSheet}>
+          {/* Header with title and close button */}
           <View style={styles.header}>
             <ThemedText type="subtitle" style={styles.title}>
               Настройки
@@ -58,6 +59,7 @@ export default function SettingsModal({
             >
               <ThemedText style={styles.optionIcon}>🎯</ThemedText>
               <ThemedText style={styles.optionText}>Сменить класс</ThemedText>
+              <ThemedText style={styles.chevron}>›</ThemedText>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -70,6 +72,7 @@ export default function SettingsModal({
             >
               <ThemedText style={styles.optionIcon}>🔄</ThemedText>
               <ThemedText style={styles.optionText}>Проверить обновления</ThemedText>
+              <ThemedText style={styles.chevron}>›</ThemedText>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -82,10 +85,14 @@ export default function SettingsModal({
             >
               <ThemedText style={styles.optionIcon}>📧</ThemedText>
               <ThemedText style={styles.optionText}>Обратная связь</ThemedText>
+              <ThemedText style={styles.chevron}>›</ThemedText>
             </TouchableOpacity>
           </View>
-        </ThemedView>
-      </View>
+
+          {/* Bottom safe area */}
+          <View style={styles.bottomSafeArea} />
+        </View>
+      </Pressable>
     </Modal>
   );
 }
@@ -93,31 +100,22 @@ export default function SettingsModal({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 9999,
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+    justifyContent: "flex-end",
   },
-  modalContainer: {
+  bottomSheet: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    padding: 0,
-    minWidth: 280,
-    maxWidth: 320,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingTop: 12,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 4,
+      height: -4,
     },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 12,
   },
   header: {
     flexDirection: "row",
@@ -126,45 +124,54 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
+    borderBottomColor: "#f0f0f0",
   },
   title: {
     fontSize: 18,
     fontWeight: "600",
   },
   closeButton: {
-    padding: 4,
-    borderRadius: 12,
+    padding: 6,
+    borderRadius: 15,
     backgroundColor: "#f0f0f0",
-    minWidth: 28,
-    minHeight: 28,
+    width: 30,
+    height: 30,
     justifyContent: "center",
     alignItems: "center",
   },
   closeIcon: {
-    fontSize: 16,
+    fontSize: 14,
     color: "#666",
-    fontWeight: "bold",
+    fontWeight: "600",
   },
   optionsContainer: {
-    padding: 8,
+    paddingVertical: 8,
   },
   option: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     paddingVertical: 16,
-    borderRadius: 12,
-    marginVertical: 2,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f8f8f8",
   },
   optionIcon: {
-    fontSize: 20,
+    fontSize: 22,
     marginRight: 16,
-    width: 24,
+    width: 28,
     textAlign: "center",
   },
   optionText: {
     fontSize: 16,
     flex: 1,
+    color: "#333",
+  },
+  chevron: {
+    fontSize: 20,
+    color: "#ccc",
+    fontWeight: "300",
+  },
+  bottomSafeArea: {
+    height: 20,
   },
 });

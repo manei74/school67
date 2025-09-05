@@ -8,7 +8,7 @@ import { apiService } from "@/src/services/api";
 import { useAppStore } from "@/src/store/simpleStore";
 import { formatClassName } from "@/src/utils/classUtils";
 import { checkForUpdatesManually } from "@/src/components/UpdateChecker";
-import SettingsModal from "@/src/components/SettingsModal";
+import SettingsBottomSheet from "@/src/components/SettingsBottomSheet";
 import React, { useEffect, useState } from "react";
 import {
   Alert,
@@ -112,6 +112,7 @@ export default function ScheduleScreen() {
   };
 
   const openSettings = () => {
+    console.log("🔧 Opening settings modal, current state:", settingsModalVisible);
     setSettingsModalVisible(true);
   };
 
@@ -314,8 +315,8 @@ export default function ScheduleScreen() {
       {/* Content */}
       {renderContent()}
 
-      {/* Settings Modal */}
-      <SettingsModal
+      {/* Settings Bottom Sheet */}
+      <SettingsBottomSheet
         visible={settingsModalVisible}
         onClose={() => setSettingsModalVisible(false)}
         onChangeClass={showClassSelection}
