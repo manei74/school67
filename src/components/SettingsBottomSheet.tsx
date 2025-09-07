@@ -77,7 +77,7 @@ export default function SettingsBottomSheet({
 
             <TouchableOpacity
               style={styles.option}
-              onPress={() => {
+              onPress={() => { 
                 onClose();
                 onBugReport();
               }}

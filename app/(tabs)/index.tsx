@@ -1,14 +1,14 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { IconSymbol } from "@/components/ui/IconSymbol";
+import SettingsBottomSheet from "@/src/components/SettingsBottomSheet";
+import { checkForUpdatesManually } from "@/src/components/UpdateChecker";
 import BellsScreen from "@/src/screens/BellsScreen";
 import SchoolNavigationScreen from "@/src/screens/SchoolNavigationScreen";
 import WeekScheduleScreen from "@/src/screens/WeekScheduleScreen";
 import { apiService } from "@/src/services/api";
 import { useAppStore } from "@/src/store/simpleStore";
 import { formatClassName } from "@/src/utils/classUtils";
-import { checkForUpdatesManually } from "@/src/components/UpdateChecker";
-import SettingsBottomSheet from "@/src/components/SettingsBottomSheet";
 import React, { useEffect, useState } from "react";
 import {
   Alert,
@@ -91,7 +91,11 @@ export default function ScheduleScreen() {
 3. 
 
 ДОПОЛНИТЕЛЬНАЯ ИНФОРМАЦИЯ:
-• Класс: ${settings.selectedClassId ? formatClassName(settings.selectedClassId) : "не выбран"}
+• Класс: ${
+              settings.selectedClassId
+                ? formatClassName(settings.selectedClassId)
+                : "не выбран"
+            }
 • Дата: ${new Date().toLocaleDateString()}
 
 ВАЖНО: Пожалуйста, приложите скриншоты или запись экрана, если возможно.
@@ -112,7 +116,10 @@ export default function ScheduleScreen() {
   };
 
   const openSettings = () => {
-    console.log("🔧 Opening settings modal, current state:", settingsModalVisible);
+    console.log(
+      "🔧 Opening settings modal, current state:",
+      settingsModalVisible
+    );
     setSettingsModalVisible(true);
   };
 
@@ -130,7 +137,7 @@ export default function ScheduleScreen() {
             try {
               await resetOnboarding();
             } catch (error) {
-              console.error('Error resetting onboarding:', error);
+              console.error("Error resetting onboarding:", error);
             }
           },
         },
@@ -291,7 +298,7 @@ export default function ScheduleScreen() {
           <ThemedView>
             <ThemedText type="title">Расписание</ThemedText>
             <ThemedText style={styles.tagline}>
-              «В приложении — удобно, на доске лицея — точно»
+              В приложении — удобно, на доске лицея — точно
             </ThemedText>
             {settings.selectedClassId && (
               <ThemedText type="subtitle">
@@ -498,10 +505,11 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   tagline: {
-    fontSize: 12,
+    fontSize: 13,
     fontStyle: "italic",
-    color: "#666",
-    marginTop: 2,
-    marginBottom: 4,
+    color: "#007AFF",
+    marginTop: 3,
+    marginBottom: 6,
+    fontWeight: "500",
   },
 });
