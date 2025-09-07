@@ -276,7 +276,13 @@ export default function ScheduleScreen() {
           </ThemedView>
         ) : (
           <ThemedView style={styles.emptyState}>
-            <ThemedText>На сегодня уроков нет</ThemedText>
+            <ThemedText style={styles.emptyStateEmoji}>📚</ThemedText>
+            <ThemedText type="subtitle" style={styles.emptyStateText}>
+              На сегодня уроков нет
+            </ThemedText>
+            <ThemedText style={styles.emptyStateSubtext}>
+              Отличное время для отдыха!
+            </ThemedText>
           </ThemedView>
         )}
       </ScrollView>
@@ -415,6 +421,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 32,
+    paddingVertical: 80,
+  },
+  emptyStateEmoji: {
+    fontSize: 48,
+    marginBottom: 16,
+  },
+  emptyStateText: {
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  emptyStateSubtext: {
+    textAlign: "center",
+    color: "#666",
+    fontSize: 14,
+    fontStyle: "italic",
   },
   emptyText: {
     textAlign: "center",

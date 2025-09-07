@@ -96,26 +96,30 @@ export default function WeekScheduleScreen() {
   };
 
   const getWeekTitle = () => {
-    if (currentWeekOffset === 0) {
+    const now = new Date();
+    const currentWeekString = getCurrentWeek();
+    const targetWeekString = getTargetWeek(currentWeekOffset);
+    
+    // If we're showing the actual current calendar week, always call it "current"
+    if (targetWeekString === currentWeekString) {
       return "Текущая неделя";
-    } else if (currentWeekOffset === 1) {
-      const now = new Date();
-      const dayOfWeek = now.getDay();
-      // If it's weekend and showing next week, call it current
-      if (dayOfWeek === 0 || dayOfWeek === 6) {
-        return "Следующая неделя";
-      }
+    }
+    
+    if (currentWeekOffset === 1) {
       return "Следующая неделя";
     } else if (currentWeekOffset === -1) {
       return "Предыдущая неделя";
     } else if (currentWeekOffset > 1) {
       const weeksWord = getWeeksPlural(currentWeekOffset);
       return `Через ${currentWeekOffset} ${weeksWord}`;
-    } else {
+    } else if (currentWeekOffset < -1) {
       const weeksAgo = Math.abs(currentWeekOffset);
       const weeksWord = getWeeksPlural(weeksAgo);
       return `${weeksAgo} ${weeksWord} назад`;
     }
+    
+    // Fallback
+    return "Текущая неделя";
   };
 
   const getWeeksPlural = (count: number): string => {
