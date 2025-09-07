@@ -109,9 +109,27 @@ export default function WeekScheduleScreen() {
     } else if (currentWeekOffset === -1) {
       return "Предыдущая неделя";
     } else if (currentWeekOffset > 1) {
-      return `Через ${currentWeekOffset} недель`;
+      const weeksWord = getWeeksPlural(currentWeekOffset);
+      return `Через ${currentWeekOffset} ${weeksWord}`;
     } else {
-      return `${Math.abs(currentWeekOffset)} недель назад`;
+      const weeksAgo = Math.abs(currentWeekOffset);
+      const weeksWord = getWeeksPlural(weeksAgo);
+      return `${weeksAgo} ${weeksWord} назад`;
+    }
+  };
+
+  const getWeeksPlural = (count: number): string => {
+    const lastDigit = count % 10;
+    const lastTwoDigits = count % 100;
+    
+    if (lastTwoDigits >= 11 && lastTwoDigits <= 14) {
+      return "недель";
+    } else if (lastDigit === 1) {
+      return "неделю"; // 1 неделю назад, через 1 неделю
+    } else if (lastDigit >= 2 && lastDigit <= 4) {
+      return "недели"; // 2, 3, 4 недели
+    } else {
+      return "недель"; // 5+ недель
     }
   };
 
