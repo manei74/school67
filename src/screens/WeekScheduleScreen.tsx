@@ -12,14 +12,19 @@ export default function WeekScheduleScreen() {
   const { settings, weekSchedule, isLoading, setWeekSchedule, setLoading } = useAppStore();
   const [refreshing, setRefreshing] = useState(false);
   const [currentWeekOffset, setCurrentWeekOffset] = useState(0); // 0 = current week, 1 = next week, -1 = previous week
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    if (settings.selectedClassId) {
-      // Initialize week offset based on current day
+    if (settings.selectedClassId && !isInitialized) {
+      // Initialize week offset based on current day (only once)
       initializeWeekOffset();
+      setIsInitialized(true);
+      loadWeekSchedule();
+    } else if (settings.selectedClassId && isInitialized) {
+      // Just load data without changing offset
       loadWeekSchedule();
     }
-  }, [settings.selectedClassId]);
+  }, [settings.selectedClassId, isInitialized]);
 
   useEffect(() => {
     if (settings.selectedClassId) {
@@ -28,15 +33,8 @@ export default function WeekScheduleScreen() {
   }, [currentWeekOffset]);
 
   const initializeWeekOffset = () => {
-    const now = new Date();
-    const dayOfWeek = now.getDay(); // 0 = Sunday, 6 = Saturday
-    
-    // If it's Saturday (6) or Sunday (0), show next week by default
-    if (dayOfWeek === 0 || dayOfWeek === 6) {
-      setCurrentWeekOffset(1);
-    } else {
-      setCurrentWeekOffset(0);
-    }
+    // Always start with offset 0 (current school week)
+    setCurrentWeekOffset(0);
   };
 
   const loadWeekSchedule = async () => {
@@ -62,8 +60,11 @@ export default function WeekScheduleScreen() {
 
   const getTargetWeek = (weekOffset: number) => {
     const now = new Date();
-    const targetDate = new Date(now);
-    targetDate.setDate(now.getDate() + (weekOffset * 7));
+    const schoolWeekStart = getSchoolWeekStart(now);
+    
+    // Apply offset to the school week base
+    const targetDate = new Date(schoolWeekStart);
+    targetDate.setDate(schoolWeekStart.getDate() + (weekOffset * 7));
     
     const week = getWeekNumber(targetDate);
     return `${targetDate.getFullYear()}-W${week.toString().padStart(2, '0')}`;
@@ -71,8 +72,10 @@ export default function WeekScheduleScreen() {
 
   const getCurrentWeek = () => {
     const now = new Date();
-    const week = getWeekNumber(now);
-    return `${now.getFullYear()}-W${week.toString().padStart(2, '0')}`;
+    const schoolWeekStart = getSchoolWeekStart(now);
+    
+    const week = getWeekNumber(schoolWeekStart);
+    return `${schoolWeekStart.getFullYear()}-W${week.toString().padStart(2, '0')}`;
   };
 
   const goToPreviousWeek = () => {
@@ -84,27 +87,20 @@ export default function WeekScheduleScreen() {
   };
 
   const goToCurrentWeek = () => {
-    const now = new Date();
-    const dayOfWeek = now.getDay();
-    
-    // If it's weekend, still show next week as "current"
-    if (dayOfWeek === 0 || dayOfWeek === 6) {
-      setCurrentWeekOffset(1);
-    } else {
-      setCurrentWeekOffset(0);
-    }
+    // Always go to offset 0 (current school week)
+    setCurrentWeekOffset(0);
   };
 
   const getWeekTitle = () => {
-    const now = new Date();
     const currentWeekString = getCurrentWeek();
     const targetWeekString = getTargetWeek(currentWeekOffset);
     
-    // If we're showing the actual current calendar week, always call it "current"
+    // If we're showing the current school week, call it "current"
     if (targetWeekString === currentWeekString) {
       return "Текущая неделя";
     }
     
+    // Use offset directly since it's now relative to school week
     if (currentWeekOffset === 1) {
       return "Следующая неделя";
     } else if (currentWeekOffset === -1) {
@@ -143,6 +139,26 @@ export default function WeekScheduleScreen() {
     d.setUTCDate(d.getUTCDate() + 4 - dayNum);
     const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
     return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1)/7);
+  };
+
+  const getSchoolWeekStart = (date: Date) => {
+    const dayOfWeek = date.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
+    
+    if (dayOfWeek === 6) {
+      // Saturday: return next day (Sunday)
+      const nextSunday = new Date(date);
+      nextSunday.setDate(date.getDate() + 1);
+      return nextSunday;
+    } else if (dayOfWeek === 0) {
+      // Sunday: return today (Sunday is start of week)
+      return new Date(date);
+    } else {
+      // Weekday: return Sunday of this week
+      const sundayOfThisWeek = new Date(date);
+      const daysFromSunday = dayOfWeek; // Mon=1, Tue=2, etc., Sun=0
+      sundayOfThisWeek.setDate(date.getDate() - daysFromSunday);
+      return sundayOfThisWeek;
+    }
   };
 
   const formatLessonTime = (timeStart: string, timeEnd: string) => {

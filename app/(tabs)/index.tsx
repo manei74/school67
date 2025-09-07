@@ -425,6 +425,7 @@ const styles = StyleSheet.create({
   },
   emptyStateEmoji: {
     fontSize: 48,
+    lineHeight: 59,
     marginBottom: 16,
   },
   emptyStateText: {
