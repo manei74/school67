@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, ScrollView, RefreshControl, View } from 'react-native';
+import { StyleSheet, ScrollView, RefreshControl, View, TouchableOpacity } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useAppStore } from '../store/simpleStore';
@@ -11,20 +11,41 @@ import { Schedule } from '../types';
 export default function WeekScheduleScreen() {
   const { settings, weekSchedule, isLoading, setWeekSchedule, setLoading } = useAppStore();
   const [refreshing, setRefreshing] = useState(false);
+  const [currentWeekOffset, setCurrentWeekOffset] = useState(0); // 0 = current week, 1 = next week, -1 = previous week
+
+  useEffect(() => {
+    if (settings.selectedClassId) {
+      // Initialize week offset based on current day
+      initializeWeekOffset();
+      loadWeekSchedule();
+    }
+  }, [settings.selectedClassId]);
 
   useEffect(() => {
     if (settings.selectedClassId) {
       loadWeekSchedule();
     }
-  }, [settings.selectedClassId]);
+  }, [currentWeekOffset]);
+
+  const initializeWeekOffset = () => {
+    const now = new Date();
+    const dayOfWeek = now.getDay(); // 0 = Sunday, 6 = Saturday
+    
+    // If it's Saturday (6) or Sunday (0), show next week by default
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+      setCurrentWeekOffset(1);
+    } else {
+      setCurrentWeekOffset(0);
+    }
+  };
 
   const loadWeekSchedule = async () => {
     if (!settings.selectedClassId) return;
     
     setLoading(true);
     try {
-      const currentWeek = getCurrentWeek();
-      const schedules = await apiService.getWeekSchedule(settings.selectedClassId, currentWeek);
+      const targetWeek = getTargetWeek(currentWeekOffset);
+      const schedules = await apiService.getWeekSchedule(settings.selectedClassId, targetWeek);
       setWeekSchedule(schedules);
     } catch (error) {
       console.error('Failed to load week schedule:', error);
@@ -39,10 +60,59 @@ export default function WeekScheduleScreen() {
     setRefreshing(false);
   };
 
+  const getTargetWeek = (weekOffset: number) => {
+    const now = new Date();
+    const targetDate = new Date(now);
+    targetDate.setDate(now.getDate() + (weekOffset * 7));
+    
+    const week = getWeekNumber(targetDate);
+    return `${targetDate.getFullYear()}-W${week.toString().padStart(2, '0')}`;
+  };
+
   const getCurrentWeek = () => {
     const now = new Date();
     const week = getWeekNumber(now);
     return `${now.getFullYear()}-W${week.toString().padStart(2, '0')}`;
+  };
+
+  const goToPreviousWeek = () => {
+    setCurrentWeekOffset(prev => prev - 1);
+  };
+
+  const goToNextWeek = () => {
+    setCurrentWeekOffset(prev => prev + 1);
+  };
+
+  const goToCurrentWeek = () => {
+    const now = new Date();
+    const dayOfWeek = now.getDay();
+    
+    // If it's weekend, still show next week as "current"
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+      setCurrentWeekOffset(1);
+    } else {
+      setCurrentWeekOffset(0);
+    }
+  };
+
+  const getWeekTitle = () => {
+    if (currentWeekOffset === 0) {
+      return "Текущая неделя";
+    } else if (currentWeekOffset === 1) {
+      const now = new Date();
+      const dayOfWeek = now.getDay();
+      // If it's weekend and showing next week, call it current
+      if (dayOfWeek === 0 || dayOfWeek === 6) {
+        return "Следующая неделя";
+      }
+      return "Следующая неделя";
+    } else if (currentWeekOffset === -1) {
+      return "Предыдущая неделя";
+    } else if (currentWeekOffset > 1) {
+      return `Через ${currentWeekOffset} недель`;
+    } else {
+      return `${Math.abs(currentWeekOffset)} недель назад`;
+    }
   };
 
   const getWeekNumber = (date: Date) => {
@@ -88,6 +158,38 @@ export default function WeekScheduleScreen() {
 
   return (
     <ThemedView style={styles.container}>
+      {/* Week Navigation Header */}
+      <ThemedView style={styles.navigationHeader}>
+        <TouchableOpacity 
+          style={styles.navButton} 
+          onPress={goToPreviousWeek}
+          activeOpacity={0.7}
+        >
+          <ThemedText style={styles.navButtonText}>‹</ThemedText>
+        </TouchableOpacity>
+        
+        <TouchableOpacity 
+          style={styles.weekTitleContainer}
+          onPress={goToCurrentWeek}
+          activeOpacity={0.7}
+        >
+          <ThemedText type="defaultSemiBold" style={styles.weekTitle}>
+            {getWeekTitle()}
+          </ThemedText>
+          <ThemedText style={styles.weekSubtitle}>
+            Нажмите для текущей недели
+          </ThemedText>
+        </TouchableOpacity>
+        
+        <TouchableOpacity 
+          style={styles.navButton} 
+          onPress={goToNextWeek}
+          activeOpacity={0.7}
+        >
+          <ThemedText style={styles.navButtonText}>›</ThemedText>
+        </TouchableOpacity>
+      </ThemedView>
+
       <ScrollView 
         style={styles.scrollView}
         refreshControl={
@@ -179,6 +281,43 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 0,
+  },
+  navigationHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#f8f9fa',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  navButton: {
+    backgroundColor: '#007AFF',
+    borderRadius: 20,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  navButtonText: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  weekTitleContainer: {
+    flex: 1,
+    alignItems: 'center',
+    marginHorizontal: 16,
+  },
+  weekTitle: {
+    fontSize: 16,
+    marginBottom: 2,
+  },
+  weekSubtitle: {
+    fontSize: 12,
+    color: '#666',
+    textAlign: 'center',
   },
   scrollView: {
     flex: 1,
