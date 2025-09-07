@@ -166,9 +166,9 @@ class ApiService {
   async getWeekSchedule(classId: string, week: string): Promise<Schedule[]> {
     console.log(`🔗 API: getWeekSchedule called for ${classId}, week ${week}`);
     try {
-      // Convert week format if needed - use date instead of week parameter
-      const currentDate = new Date().toISOString().split('T')[0];
-      const response = await fetch(`${this.baseUrl}/schedule/week?classId=${classId}&date=${currentDate}`);
+      // Convert week format (YYYY-WXX) to a date from that week
+      const weekDate = this.getDateFromWeek(week);
+      const response = await fetch(`${this.baseUrl}/schedule/week?classId=${classId}&date=${weekDate}`);
       
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -227,6 +227,26 @@ class ApiService {
       // Fallback to mock data
       return generateWeekSchedule(classId, week);
     }
+  }
+
+  private getDateFromWeek(week: string): string {
+    // Convert format "2025-W36" to a Monday date of that week
+    const [yearStr, weekStr] = week.split('-W');
+    const year = parseInt(yearStr);
+    const weekNumber = parseInt(weekStr);
+    
+    // Calculate the Monday of the given week
+    const jan1 = new Date(year, 0, 1);
+    const jan1DayOfWeek = jan1.getDay() || 7; // Make Sunday = 7
+    
+    // Find the Monday of week 1
+    const firstMonday = new Date(year, 0, 1 + (8 - jan1DayOfWeek) % 7);
+    
+    // Add weeks to get to target week
+    const targetMonday = new Date(firstMonday);
+    targetMonday.setDate(firstMonday.getDate() + (weekNumber - 1) * 7);
+    
+    return targetMonday.toISOString().split('T')[0];
   }
 
   // Bells API
