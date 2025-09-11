@@ -1,0 +1,115 @@
+name: EAS Build and Submit
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # Trigger on version tags like v1.0.0
+  workflow_dispatch:  # Allow manual triggering
+    inputs:
+      platform:
+        description: 'Platform to build'
+        required: true
+        default: 'android'
+        type: choice
+        options:
+          - android
+          - ios
+          - all
+      profile:
+        description: 'Build profile'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - preview
+      submit:
+        description: 'Submit to store after build'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  build:
+    name: EAS Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for EXPO_TOKEN
+        run: |
+          if [ -z "${{ secrets.EXPO_TOKEN }}" ]; then
+            echo "❌ EXPO_TOKEN secret is not set"
+            echo "Please add your Expo access token to repository secrets"
+            exit 1
+          fi
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Get platform and profile
+        id: get-params
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            echo "platform=android" >> $GITHUB_OUTPUT
+            echo "profile=production" >> $GITHUB_OUTPUT
+            echo "submit=true" >> $GITHUB_OUTPUT
+          else
+            echo "platform=${{ github.event.inputs.platform }}" >> $GITHUB_OUTPUT
+            echo "profile=${{ github.event.inputs.profile }}" >> $GITHUB_OUTPUT
+            echo "submit=${{ github.event.inputs.submit }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build Android
+        if: steps.get-params.outputs.platform == 'android' || steps.get-params.outputs.platform == 'all'
+        run: |
+          eas build --platform android --profile ${{ steps.get-params.outputs.profile }} --non-interactive
+
+      - name: Build iOS
+        if: steps.get-params.outputs.platform == 'ios' || steps.get-params.outputs.platform == 'all'
+        run: |
+          eas build --platform ios --profile ${{ steps.get-params.outputs.profile }} --non-interactive
+
+  submit:
+    name: Submit to Store
+    runs-on: ubuntu-latest
+    needs: build
+    if: ${{ needs.build.outputs.submit == 'true' && (github.event_name == 'push' || github.event.inputs.submit == 'true') }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Submit to Google Play (Internal Testing)
+        if: steps.get-params.outputs.platform == 'android' || steps.get-params.outputs.platform == 'all'
+        run: |
+          eas submit --platform android --profile production --non-interactive
+
+      - name: Submit to App Store (TestFlight)
+        if: steps.get-params.outputs.platform == 'ios' || steps.get-params.outputs.platform == 'all'
+        run: |
+          eas submit --platform ios --profile production --non-interactive
