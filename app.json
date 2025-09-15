@@ -17,7 +17,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -32,11 +34,18 @@
     "web": {
       "favicon": "./assets/images/favicon.png"
     },
-    "platforms": ["ios", "android", "web"],
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
     "extra": {
       "eas": {
         "projectId": "c4814f23-4a0f-43d1-8f10-ffe8cf90d07c"
       }
-    }
+    },
+    "plugins": [
+      "expo-router"
+    ]
   }
 }

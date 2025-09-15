@@ -30,7 +30,7 @@ const SCHOOL_ROOMS: Room[] = [
     type: "classroom",
     classAssigned: "6в",
     subject: "Изобразительное искусство",
-    teacher: "Соловьёва Аннна Александровна",
+    teacher: "Соловьёва Анна Александровна",
   },
   {
     number: "103",
