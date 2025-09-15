@@ -29,7 +29,11 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.lyceum67.app",
-      "versionCode": 3
+      "versionCode": 3,
+      "minSdkVersion": 21,
+      "compileSdkVersion": 34,
+      "targetSdkVersion": 34,
+      "buildToolsVersion": "34.0.0"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
