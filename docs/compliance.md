@@ -80,8 +80,6 @@ Current permissions in `app.json`:
 ```json
 "android": {
   "permissions": [
-    // TODO: Review and list actual permissions
-    // Keep minimal - remove unused permissions
   ]
 }
 ```

@@ -4,7 +4,7 @@
 
 ## Privacy Policy for Lyceum 67 Mobile App
 
-*Last updated: [DATE]*
+*Last updated: [September 10 2025]*
 
 ### Introduction
 This privacy policy describes how the Lyceum 67 mobile application ("we", "our", or "us") collects, uses, and shares information when you use our mobile application (the "Service").
@@ -85,9 +85,7 @@ Our app uses the following third-party services:
 
 If you have questions about this privacy policy or our data practices, contact us at:
 
-**Email:** [YOUR_EMAIL]  
-**Address:** [LYCEUM_67_ADDRESS]  
-**Phone:** [PHONE_NUMBER]
+**Email:** [maneev.nikita@gmail.com]  
 
 ---
 
