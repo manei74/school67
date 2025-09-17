@@ -10,14 +10,17 @@ import { Class } from "../types";
 export default function OnboardingScreen() {
   console.log("👋 OnboardingScreen starting");
 
-  // Safe area with fallback
+  // Safe area with fallback - extra padding for Samsung devices
   let insets;
   try {
     insets = useSafeAreaInsets();
   } catch (error) {
     console.log("⚠️ SafeAreaProvider not found, using fallback");
-    insets = { bottom: 20, top: 20, left: 0, right: 0 };
+    insets = { bottom: 40, top: 20, left: 0, right: 0 };
   }
+  
+  // Extra safety for Samsung gesture navigation
+  const bottomPadding = Math.max(insets.bottom, 40);
   
   const { completeOnboarding, setSelectedClass } = useAppStore();
   const [classes, setClasses] = useState<Class[]>([]);
@@ -172,7 +175,7 @@ export default function OnboardingScreen() {
         </ThemedView>
       </ScrollView>
 
-      <ThemedView style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 24) }]}>
+      <ThemedView style={[styles.footer, { paddingBottom: bottomPadding }]}>
         <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
           <ThemedText style={styles.skipButtonText}>Пропустить</ThemedText>
         </TouchableOpacity>
@@ -287,6 +290,7 @@ const styles = StyleSheet.create({
     gap: 12,
     borderTopWidth: 1,
     borderTopColor: "#e0e0e0",
+    marginBottom: 10,
   },
   skipButton: {
     flex: 1,
