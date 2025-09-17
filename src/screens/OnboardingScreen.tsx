@@ -2,6 +2,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import React, { useEffect, useState } from "react";
 import { Alert, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { apiService } from "../services/api";
 import { useAppStore } from "../store/simpleStore";
 import { Class } from "../types";
@@ -9,6 +10,7 @@ import { Class } from "../types";
 export default function OnboardingScreen() {
   console.log("👋 OnboardingScreen starting");
 
+  const insets = useSafeAreaInsets();
   const { completeOnboarding, setSelectedClass } = useAppStore();
   const [classes, setClasses] = useState<Class[]>([]);
   const [selectedClassId, setSelectedClassId] = useState<string>("");
@@ -162,7 +164,7 @@ export default function OnboardingScreen() {
         </ThemedView>
       </ScrollView>
 
-      <ThemedView style={styles.footer}>
+      <ThemedView style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 24) }]}>
         <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
           <ThemedText style={styles.skipButtonText}>Пропустить</ThemedText>
         </TouchableOpacity>
