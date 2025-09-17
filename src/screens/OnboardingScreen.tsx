@@ -19,8 +19,8 @@ export default function OnboardingScreen() {
     insets = { bottom: 40, top: 20, left: 0, right: 0 };
   }
   
-  // Extra safety for Samsung gesture navigation
-  const bottomPadding = Math.max(insets.bottom, 40);
+  // Fixed padding for Samsung A35 and similar devices
+  const bottomPadding = 80;
   
   const { completeOnboarding, setSelectedClass } = useAppStore();
   const [classes, setClasses] = useState<Class[]>([]);
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
     gap: 12,
     borderTopWidth: 1,
     borderTopColor: "#e0e0e0",
-    marginBottom: 10,
+    marginBottom: 20,
   },
   skipButton: {
     flex: 1,
