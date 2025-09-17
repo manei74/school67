@@ -27,24 +27,28 @@ function AppContent() {
   if (!isOnboardingCompleted) {
     console.log("✨ Showing OnboardingScreen");
     return (
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <View style={{ flex: 1 }}>
-          <OnboardingScreen />
-        </View>
-        <StatusBar style="auto" />
-      </ThemeProvider>
+      <SafeAreaProvider>
+        <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+          <View style={{ flex: 1 }}>
+            <OnboardingScreen />
+          </View>
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </SafeAreaProvider>
     );
   }
 
   console.log("🏠 Showing main app tabs");
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <SafeAreaProvider>
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+        <StatusBar style="auto" />
+      </ThemeProvider>
+    </SafeAreaProvider>
   );
 }
 
@@ -78,11 +82,9 @@ function RootLayout() {
   console.log("✅ RootLayout rendering AppProvider");
 
   return (
-    <SafeAreaProvider>
-      <AppProvider>
-        <AppContent />
-      </AppProvider>
-    </SafeAreaProvider>
+    <AppProvider>
+      <AppContent />
+    </AppProvider>
   );
 }
 

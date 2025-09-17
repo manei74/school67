@@ -10,7 +10,15 @@ import { Class } from "../types";
 export default function OnboardingScreen() {
   console.log("👋 OnboardingScreen starting");
 
-  const insets = useSafeAreaInsets();
+  // Safe area with fallback
+  let insets;
+  try {
+    insets = useSafeAreaInsets();
+  } catch (error) {
+    console.log("⚠️ SafeAreaProvider not found, using fallback");
+    insets = { bottom: 20, top: 20, left: 0, right: 0 };
+  }
+  
   const { completeOnboarding, setSelectedClass } = useAppStore();
   const [classes, setClasses] = useState<Class[]>([]);
   const [selectedClassId, setSelectedClassId] = useState<string>("");
