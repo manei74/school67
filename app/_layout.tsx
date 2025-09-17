@@ -8,6 +8,7 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Text, View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -77,9 +78,11 @@ function RootLayout() {
   console.log("✅ RootLayout rendering AppProvider");
 
   return (
-    <AppProvider>
-      <AppContent />
-    </AppProvider>
+    <SafeAreaProvider>
+      <AppProvider>
+        <AppContent />
+      </AppProvider>
+    </SafeAreaProvider>
   );
 }
 
