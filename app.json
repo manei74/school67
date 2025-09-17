@@ -2,7 +2,7 @@
   "expo": {
     "name": "Lyceum 67",
     "slug": "lyceum67-app",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "runtimeVersion": {
       "policy": "appVersion"
     },
@@ -29,7 +29,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.lyceum67.app",
-      "versionCode": 3,
+      "versionCode": 4,
       "minSdkVersion": 21,
       "compileSdkVersion": 34,
       "targetSdkVersion": 34,
