@@ -242,17 +242,14 @@ export default function ScheduleScreen() {
                       <ThemedText type="subtitle" style={styles.lessonSubject}>
                         {part.subject}
                       </ThemedText>
-                      <View style={styles.lessonDetails}>
-                        <ThemedText style={styles.lessonRoom}>
-                          Кабинет: {part.room || "не указан"}
+                      <ThemedText style={styles.lessonRoom}>
+                        Кабинет: {part.room || "не указан"}
+                      </ThemedText>
+                      {part.teacher && (
+                        <ThemedText style={styles.lessonTeacher}>
+                          {part.teacher}
                         </ThemedText>
-
-                        {part.teacher && (
-                          <ThemedText style={styles.lessonTeacher}>
-                            {part.teacher}
-                          </ThemedText>
-                        )}
-                      </View>
+                      )}
                     </View>
                   ))
                 ) : (
@@ -261,16 +258,14 @@ export default function ScheduleScreen() {
                     <ThemedText type="subtitle" style={styles.lessonSubject}>
                       {lesson.subject || "Предмет не указан"}
                     </ThemedText>
-                    <View style={styles.lessonDetails}>
-                      <ThemedText style={styles.lessonRoom}>
-                        Кабинет: {lesson.room || "не указан"}
+                    <ThemedText style={styles.lessonRoom}>
+                      Кабинет: {lesson.room || "не указан"}
+                    </ThemedText>
+                    {lesson.teacher && (
+                      <ThemedText style={styles.lessonTeacher}>
+                        {lesson.teacher}
                       </ThemedText>
-                      {lesson.teacher && (
-                        <ThemedText style={styles.lessonTeacher}>
-                          {lesson.teacher}
-                        </ThemedText>
-                      )}
-                    </View>
+                    )}
                   </>
                 )}
               </ThemedView>
@@ -500,21 +495,16 @@ const styles = StyleSheet.create({
   lessonSubject: {
     marginBottom: 8,
   },
-  lessonDetails: {
-    flexDirection: Dimensions.get('window').width < 375 ? "column" : "row",
-    justifyContent: "space-between",
-    alignItems: Dimensions.get('window').width < 375 ? "flex-start" : "center",
-    gap: 8,
-  },
   lessonRoom: {
     color: "#666",
     fontSize: 14,
+    marginBottom: 4,
   },
   lessonTeacher: {
     color: "#666",
-    fontSize: Platform.OS === 'ios' && Dimensions.get('window').width < 375 ? 13 : 14,
+    fontSize: Platform.OS === 'ios' ? 13 : 14,
     fontStyle: "italic",
-    flexShrink: 1,
+    marginTop: 2,
   },
   lessonPart: {
     marginBottom: 12,
