@@ -12,7 +12,9 @@ import { formatClassName } from "@/src/utils/classUtils";
 import React, { useEffect, useState } from "react";
 import {
   Alert,
+  Dimensions,
   Linking,
+  Platform,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -499,9 +501,9 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   lessonDetails: {
-    flexDirection: "row",
+    flexDirection: Dimensions.get('window').width < 375 ? "column" : "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: Dimensions.get('window').width < 375 ? "flex-start" : "center",
     gap: 8,
   },
   lessonRoom: {
@@ -510,8 +512,9 @@ const styles = StyleSheet.create({
   },
   lessonTeacher: {
     color: "#666",
-    fontSize: 14,
+    fontSize: Platform.OS === 'ios' && Dimensions.get('window').width < 375 ? 13 : 14,
     fontStyle: "italic",
+    flexShrink: 1,
   },
   lessonPart: {
     marginBottom: 12,

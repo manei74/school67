@@ -1,7 +1,7 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import React, { useEffect, useState } from "react";
-import { Alert, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { Alert, Platform, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { apiService } from "../services/api";
 import { useAppStore } from "../store/simpleStore";
@@ -19,8 +19,8 @@ export default function OnboardingScreen() {
     insets = { bottom: 40, top: 20, left: 0, right: 0 };
   }
   
-  // Optimized padding for Samsung A35 navigation clearance
-  const bottomPadding = 50;
+  // Platform-specific padding: iOS safe area vs Android navigation
+  const bottomPadding = Platform.OS === 'ios' ? Math.max(insets.bottom, 20) : 50;
   
   const { completeOnboarding, setSelectedClass } = useAppStore();
   const [classes, setClasses] = useState<Class[]>([]);
@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
   },
   skipButton: {
     flex: 1,
-    paddingVertical: 16,
+    paddingVertical: Platform.OS === 'ios' ? 12 : 16,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: "#ccc",
@@ -302,13 +302,13 @@ const styles = StyleSheet.create({
   },
   skipButtonText: {
     color: "#666",
-    fontSize: 16,
+    fontSize: Platform.OS === 'ios' ? 14 : 16,
     fontWeight: "600",
   },
   continueButton: {
     flex: 2,
     backgroundColor: "#2196F3",
-    paddingVertical: 16,
+    paddingVertical: Platform.OS === 'ios' ? 12 : 16,
     borderRadius: 12,
     alignItems: "center",
   },
@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
   },
   continueButtonText: {
     color: "#FFFFFF",
-    fontSize: 16,
+    fontSize: Platform.OS === 'ios' ? 14 : 16,
     fontWeight: "600",
   },
 });
