@@ -2,7 +2,7 @@
   "expo": {
     "name": "Lyceum 67",
     "slug": "lyceum67-app",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "runtimeVersion": {
       "policy": "appVersion"
     },
@@ -23,7 +23,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.lyceum67.app",
-      "buildNumber": "1.0.3",
+      "buildNumber": "1.0.4",
       "deploymentTarget": "13.0",
       "icon": "./assets/images/icon.png",
       "splash": {
@@ -41,7 +41,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.lyceum67.app",
-      "versionCode": 4,
+      "versionCode": 5,
       "minSdkVersion": 21,
       "compileSdkVersion": 34,
       "targetSdkVersion": 34,
