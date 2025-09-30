@@ -2,12 +2,11 @@ import {
   MOCK_BELLS,
   MOCK_CLASSES,
   MOCK_HOLIDAYS,
-  generateScheduleForDate,
-  generateWeekSchedule,
   getNextHoliday,
 } from "../data/mockData";
 import { Class, Holiday, Schedule, ApiLesson } from "../types";
 import { ENV_CONFIG } from "../config/env";
+import { StorageService, STORAGE_KEYS } from "../utils/storage";
 
 // API Service class
 class ApiService {
@@ -103,6 +102,10 @@ class ApiService {
   // Schedule API
   async getSchedule(classId: string, date: string): Promise<Schedule> {
     console.log(`🔗 API: getSchedule called for ${classId} on ${date}`);
+    
+    // First try to get from cache
+    const cacheKey = `${STORAGE_KEYS.SCHEDULE_CACHE}_${classId}_${date}`;
+    
     try {
       const response = await fetch(`${this.baseUrl}/schedule?classId=${classId}&date=${date}`);
       
@@ -154,17 +157,32 @@ class ApiService {
         etag: data.etag
       };
       
+      // Cache the successful response
+      await StorageService.setCacheItem(cacheKey, schedule, 24 * 60); // Cache for 24 hours
+      console.log('💾 Schedule cached successfully');
+      
       return schedule;
     } catch (error) {
       console.error('Failed to load schedule from API:', error);
-      console.log('🔗 API: Falling back to mock data');
-      // Fallback to mock data
-      return generateScheduleForDate(classId, date);
+      
+      // Try to get from cache when API fails
+      const cachedSchedule = await StorageService.getCacheItem<Schedule>(cacheKey);
+      if (cachedSchedule) {
+        console.log('📱 Using cached schedule data');
+        return cachedSchedule;
+      }
+      
+      // If no cached data, throw error to let UI handle "no data" state
+      console.log('❌ No cached data available, throwing error');
+      throw new Error('No internet connection and no cached data available');
     }
   }
 
   async getWeekSchedule(classId: string, week: string): Promise<Schedule[]> {
     console.log(`🔗 API: getWeekSchedule called for ${classId}, week ${week}`);
+    
+    const cacheKey = `${STORAGE_KEYS.SCHEDULE_CACHE}_week_${classId}_${week}`;
+    
     try {
       // Convert week format (YYYY-WXX) to a date from that week
       const weekDate = this.getDateFromWeek(week);
@@ -220,12 +238,24 @@ class ApiService {
         };
       });
       
+      // Cache the successful response
+      await StorageService.setCacheItem(cacheKey, weekSchedule, 24 * 60); // Cache for 24 hours
+      console.log('💾 Week schedule cached successfully');
+      
       return weekSchedule;
     } catch (error) {
       console.error('Failed to load week schedule from API:', error);
-      console.log('🔗 API: Falling back to mock data');
-      // Fallback to mock data
-      return generateWeekSchedule(classId, week);
+      
+      // Try to get from cache when API fails
+      const cachedWeekSchedule = await StorageService.getCacheItem<Schedule[]>(cacheKey);
+      if (cachedWeekSchedule) {
+        console.log('📱 Using cached week schedule data');
+        return cachedWeekSchedule;
+      }
+      
+      // If no cached data, throw error to let UI handle "no data" state
+      console.log('❌ No cached week schedule available, throwing error');
+      throw new Error('No internet connection and no cached data available');
     }
   }
 
