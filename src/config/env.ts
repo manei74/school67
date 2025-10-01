@@ -21,9 +21,3 @@ export const ENV_CONFIG = {
   VK_GROUP_URL: "https://vk.com/myschool_67",
   TELEGRAM_CHANNEL_URL: "https://t.me/licey67",
 };
-
-// Development-specific overrides
-if (__DEV__) {
-  // In development, you can override any settings here
-  console.log("🔧 Development mode - API URL:", ENV_CONFIG.API_BASE_URL);
-}

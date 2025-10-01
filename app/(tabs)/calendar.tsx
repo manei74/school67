@@ -1,6 +1,6 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { RefreshControl, ScrollView, StyleSheet } from "react-native";
 
 const schoolCalendarData = {
@@ -134,31 +134,55 @@ export default function CalendarScreen() {
   const [daysUntilHoliday, setDaysUntilHoliday] = useState<number | null>(null);
   const [isInHoliday, setIsInHoliday] = useState<boolean>(false);
 
-  const parseHolidayDates = useCallback((period: string): { start: Date | null, end: Date | null } => {
-    // Parse dates like "07.10–12.10.2025" or "31.12.2025 – 11.01.2026"
-    
-    // Full format with years: "31.12.2025 – 11.01.2026"
-    const fullMatch = period.match(/(\d{1,2})\.(\d{1,2})\.(\d{4})\s*[–-]\s*(\d{1,2})\.(\d{1,2})\.(\d{4})/);
-    if (fullMatch) {
-      const [, startDay, startMonth, startYear, endDay, endMonth, endYear] = fullMatch;
-      return {
-        start: new Date(parseInt(startYear), parseInt(startMonth) - 1, parseInt(startDay)),
-        end: new Date(parseInt(endYear), parseInt(endMonth) - 1, parseInt(endDay))
-      };
-    }
-    
-    // Short format: "07.10–12.10.2025"
-    const shortMatch = period.match(/(\d{1,2})\.(\d{1,2})[–-](\d{1,2})\.(\d{1,2})\.(\d{4})/);
-    if (shortMatch) {
-      const [, startDay, startMonth, endDay, endMonth, year] = shortMatch;
-      return {
-        start: new Date(parseInt(year), parseInt(startMonth) - 1, parseInt(startDay)),
-        end: new Date(parseInt(year), parseInt(endMonth) - 1, parseInt(endDay))
-      };
-    }
-    
-    return { start: null, end: null };
-  }, []);
+  const parseHolidayDates = useCallback(
+    (period: string): { start: Date | null; end: Date | null } => {
+      // Parse dates like "07.10–12.10.2025" or "31.12.2025 – 11.01.2026"
+
+      // Full format with years: "31.12.2025 – 11.01.2026"
+      const fullMatch = period.match(
+        /(\d{1,2})\.(\d{1,2})\.(\d{4})\s*[–-]\s*(\d{1,2})\.(\d{1,2})\.(\d{4})/
+      );
+      if (fullMatch) {
+        const [, startDay, startMonth, startYear, endDay, endMonth, endYear] =
+          fullMatch;
+        return {
+          start: new Date(
+            parseInt(startYear),
+            parseInt(startMonth) - 1,
+            parseInt(startDay)
+          ),
+          end: new Date(
+            parseInt(endYear),
+            parseInt(endMonth) - 1,
+            parseInt(endDay)
+          ),
+        };
+      }
+
+      // Short format: "07.10–12.10.2025"
+      const shortMatch = period.match(
+        /(\d{1,2})\.(\d{1,2})[–-](\d{1,2})\.(\d{1,2})\.(\d{4})/
+      );
+      if (shortMatch) {
+        const [, startDay, startMonth, endDay, endMonth, year] = shortMatch;
+        return {
+          start: new Date(
+            parseInt(year),
+            parseInt(startMonth) - 1,
+            parseInt(startDay)
+          ),
+          end: new Date(
+            parseInt(year),
+            parseInt(endMonth) - 1,
+            parseInt(endDay)
+          ),
+        };
+      }
+
+      return { start: null, end: null };
+    },
+    []
+  );
 
   const findNextHoliday = useCallback(() => {
     const today = new Date();
@@ -176,32 +200,32 @@ export default function CalendarScreen() {
           currentHoliday = {
             name: holiday.name,
             days: daysDiffToEnd,
-            isActive: true
+            isActive: true,
           };
           break; // If we're in a holiday, use this one
         }
-        
+
         // Check for next upcoming holiday (start date)
         const timeDiffToStart = start.getTime() - today.getTime();
         const daysDiffToStart = Math.ceil(timeDiffToStart / (1000 * 3600 * 24));
-        
+
         if (daysDiffToStart > 0 && daysDiffToStart < minDaysDiff) {
           minDaysDiff = daysDiffToStart;
           nextHoliday = {
             name: holiday.name,
             days: daysDiffToStart,
-            isActive: false
+            isActive: false,
           };
         }
       }
     }
-    
+
     return currentHoliday || nextHoliday;
   }, [parseHolidayDates]);
 
   const loadCalendarData = useCallback(async () => {
     const nextHoliday = findNextHoliday();
-    
+
     if (nextHoliday) {
       setDaysUntilHoliday(nextHoliday.days);
       setIsInHoliday(nextHoliday.isActive || false);
@@ -214,7 +238,6 @@ export default function CalendarScreen() {
   useEffect(() => {
     loadCalendarData();
   }, [loadCalendarData]);
-
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -235,13 +258,21 @@ export default function CalendarScreen() {
         }
       >
         {/* Holiday Counter */}
-        <ThemedView style={[styles.counterCard, isInHoliday && styles.holidayActiveCard]}>
+        <ThemedView
+          style={[styles.counterCard, isInHoliday && styles.holidayActiveCard]}
+        >
           <ThemedText type="subtitle" style={styles.counterTitle}>
-            {isInHoliday ? 'До конца каникул осталось' : 'До каникул осталось'}
+            {isInHoliday ? "До конца каникул осталось" : "До каникул осталось"}
           </ThemedText>
           {daysUntilHoliday !== null ? (
             <>
-              <ThemedText type="title" style={[styles.counterNumber, isInHoliday && styles.holidayActiveNumber]}>
+              <ThemedText
+                type="title"
+                style={[
+                  styles.counterNumber,
+                  isInHoliday && styles.holidayActiveNumber,
+                ]}
+              >
                 {daysUntilHoliday}{" "}
                 {(() => {
                   const lastDigit = daysUntilHoliday % 10;
@@ -461,7 +492,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   holidayActiveCard: {
-    background: "linear-gradient(135deg, #FF9800, #FFB74D)",
     backgroundColor: "#FF9800", // Fallback for non-gradient support
   },
   holidayActiveNumber: {
