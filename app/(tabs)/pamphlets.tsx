@@ -103,7 +103,7 @@ export default function PamphletsScreen() {
     if (pamphlet.type === "pdf" && pamphlet.url) {
       try {
         await Linking.openURL(pamphlet.url);
-      } catch (error) {
+      } catch {
         Alert.alert("Ошибка", "Не удалось открыть документ");
       }
     } else if (pamphlet.type === "html" && pamphlet.content) {

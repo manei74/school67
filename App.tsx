@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 
 import { AppProvider, useAppStore } from '@/src/store/simpleStore';
 import OnboardingScreen from '@/src/screens/OnboardingScreen';
@@ -110,12 +111,14 @@ function App() {
   console.log('🚀 App starting');
   
   return (
-    <AppProvider>
-      <NavigationContainer>
-        <AppContent />
-        <StatusBar style="auto" />
-      </NavigationContainer>
-    </AppProvider>
+    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+      <AppProvider>
+        <NavigationContainer>
+          <AppContent />
+          <StatusBar style="auto" />
+        </NavigationContainer>
+      </AppProvider>
+    </SafeAreaProvider>
   );
 }
 

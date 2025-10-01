@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { StyleSheet, ScrollView, RefreshControl, View, TouchableOpacity } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useAppStore } from '../store/simpleStore';
 import { apiService } from '../services/api';
-import { Schedule } from '../types';
 
 // Bell schedule is now provided by the API with each lesson
 
@@ -24,20 +23,20 @@ export default function WeekScheduleScreen() {
       // Just load data without changing offset
       loadWeekSchedule();
     }
-  }, [settings.selectedClassId, isInitialized]);
+  }, [settings.selectedClassId, isInitialized, loadWeekSchedule]);
 
   useEffect(() => {
     if (settings.selectedClassId) {
       loadWeekSchedule();
     }
-  }, [currentWeekOffset]);
+  }, [currentWeekOffset, settings.selectedClassId, loadWeekSchedule]);
 
   const initializeWeekOffset = () => {
     // Always start with offset 0 (current school week)
     setCurrentWeekOffset(0);
   };
 
-  const loadWeekSchedule = async () => {
+  const loadWeekSchedule = useCallback(async () => {
     if (!settings.selectedClassId) return;
     
     setLoading(true);
@@ -50,7 +49,7 @@ export default function WeekScheduleScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [settings.selectedClassId, currentWeekOffset, setLoading, setWeekSchedule, getTargetWeek]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -58,7 +57,7 @@ export default function WeekScheduleScreen() {
     setRefreshing(false);
   };
 
-  const getTargetWeek = (weekOffset: number) => {
+  const getTargetWeek = useCallback((weekOffset: number) => {
     const now = new Date();
     const schoolWeekStart = getSchoolWeekStart(now);
     
@@ -68,7 +67,7 @@ export default function WeekScheduleScreen() {
     
     const week = getWeekNumber(targetDate);
     return `${targetDate.getFullYear()}-W${week.toString().padStart(2, '0')}`;
-  };
+  }, []);
 
   const getCurrentWeek = () => {
     const now = new Date();

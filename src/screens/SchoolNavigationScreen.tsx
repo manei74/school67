@@ -457,22 +457,11 @@ const SCHOOL_ROOMS: Room[] = [
 
 export default function SchoolNavigationScreen() {
   const [selectedFloor, setSelectedFloor] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
 
   const floors = [1, 2, 3];
 
   const getFilteredRooms = () => {
-    let rooms = SCHOOL_ROOMS.filter((room) => room.floor === selectedFloor);
-
-    if (searchQuery) {
-      rooms = rooms.filter(
-        (room) =>
-          room.number.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          room.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
-    return rooms;
+    return SCHOOL_ROOMS.filter((room) => room.floor === selectedFloor);
   };
 
   const getRoomTypeIcon = (type: Room["type"]) => {

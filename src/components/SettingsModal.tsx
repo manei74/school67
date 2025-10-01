@@ -12,7 +12,7 @@ interface SettingsModalProps {
   visible: boolean;
   onClose: () => void;
   onChangeClass: () => void;
-  onCheckUpdates: () => void;
+  onShowAppInfo: () => void;
   onBugReport: () => void;
 }
 
@@ -20,7 +20,7 @@ export default function SettingsModal({
   visible,
   onClose,
   onChangeClass,
-  onCheckUpdates,
+  onShowAppInfo,
   onBugReport,
 }: SettingsModalProps) {
   return (
@@ -64,12 +64,12 @@ export default function SettingsModal({
               style={styles.option}
               onPress={() => {
                 onClose();
-                onCheckUpdates();
+                onShowAppInfo();
               }}
               activeOpacity={0.7}
             >
-              <ThemedText style={styles.optionIcon}>🔄</ThemedText>
-              <ThemedText style={styles.optionText}>Проверить обновления</ThemedText>
+              <ThemedText style={styles.optionIcon}>ℹ️</ThemedText>
+              <ThemedText style={styles.optionText}>О приложении</ThemedText>
             </TouchableOpacity>
 
             <TouchableOpacity

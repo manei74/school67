@@ -13,7 +13,7 @@ export default function GraduatesScreen() {
   const openURL = async (url: string, title: string = "ФИПИ") => {
     try {
       await Linking.openURL(url);
-    } catch (error) {
+    } catch {
       Alert.alert("Ошибка", `Не удалось открыть ${title}`);
     }
   };
@@ -173,6 +173,20 @@ export default function GraduatesScreen() {
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
       >
+        {/* EGE Section */}
+        <ThemedView style={styles.sectionContainer}>
+          <ThemedText type="subtitle" style={styles.sectionTitle}>
+            🎓 ЕГЭ (11 класс) - Демоверсии
+          </ThemedText>
+          <ThemedText style={styles.sectionDescription}>
+            Демонстрационные варианты, спецификации и кодификаторы по предметам
+          </ThemedText>
+
+          <ThemedView style={styles.subjectsGrid}>
+            {egeSubjects.map(renderSubjectCard)}
+          </ThemedView>
+        </ThemedView>
+
         {/* Task Banks Section */}
         <ThemedView style={styles.contentContainer}>
           <TouchableOpacity
@@ -200,7 +214,23 @@ export default function GraduatesScreen() {
               Открыть банк заданий ЕГЭ →
             </ThemedText>
           </TouchableOpacity>
+        </ThemedView>
 
+        {/* OGE Section */}
+        <ThemedView style={styles.sectionContainer}>
+          <ThemedText type="subtitle" style={styles.sectionTitle}>
+            📝 ОГЭ (9 класс) - Демоверсии
+          </ThemedText>
+          <ThemedText style={styles.sectionDescription}>
+            Демонстрационные варианты, спецификации и кодификаторы по предметам
+          </ThemedText>
+
+          <ThemedView style={styles.subjectsGrid}>
+            {ogeSubjects.map(renderSubjectCard)}
+          </ThemedView>
+        </ThemedView>
+
+        <ThemedView style={styles.contentContainer}>
           <TouchableOpacity
             style={[
               styles.fipiCard,
@@ -230,34 +260,6 @@ export default function GraduatesScreen() {
               Открыть банк заданий ОГЭ →
             </ThemedText>
           </TouchableOpacity>
-        </ThemedView>
-
-        {/* EGE Section */}
-        <ThemedView style={styles.sectionContainer}>
-          <ThemedText type="subtitle" style={styles.sectionTitle}>
-            🎓 ЕГЭ (11 класс) - Демоверсии
-          </ThemedText>
-          <ThemedText style={styles.sectionDescription}>
-            Демонстрационные варианты, спецификации и кодификаторы по предметам
-          </ThemedText>
-
-          <ThemedView style={styles.subjectsGrid}>
-            {egeSubjects.map(renderSubjectCard)}
-          </ThemedView>
-        </ThemedView>
-
-        {/* OGE Section */}
-        <ThemedView style={styles.sectionContainer}>
-          <ThemedText type="subtitle" style={styles.sectionTitle}>
-            📝 ОГЭ (9 класс) - Демоверсии
-          </ThemedText>
-          <ThemedText style={styles.sectionDescription}>
-            Демонстрационные варианты, спецификации и кодификаторы по предметам
-          </ThemedText>
-
-          <ThemedView style={styles.subjectsGrid}>
-            {ogeSubjects.map(renderSubjectCard)}
-          </ThemedView>
         </ThemedView>
 
         {/* Info Section */}

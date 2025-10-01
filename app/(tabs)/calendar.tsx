@@ -7,7 +7,6 @@ const schoolCalendarData = {
   academicYear: {
     start: "2025-09-01",
     duration: {
-      grade1: "33 недели",
       grades2to11: "34 недели",
     },
   },
@@ -26,7 +25,7 @@ const schoolCalendarData = {
       {
         name: "3 триместр",
         period: "01.03.2026 – 31.05.2026",
-        weeks: "12 недель (в 1 кл. до 22.05, 11 недель)",
+        weeks: "12 недель",
       },
     ],
     grades10to11: [
@@ -105,13 +104,6 @@ const schoolCalendarData = {
     },
   },
   assessment: [
-    { grades: "1–4 классы", type: "предметные", period: "20.04–30.05.2026" },
-    {
-      grades: "1–4 классы",
-      type: "метапредметные",
-      period: "06.04–11.04.2026",
-    },
-    { grades: "4 классы", type: "личностные", period: "18.05–22.05.2026" },
     {
       grades: "5–6 классы",
       type: "метапредметные",
@@ -140,20 +132,89 @@ const schoolCalendarData = {
 export default function CalendarScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [daysUntilHoliday, setDaysUntilHoliday] = useState<number | null>(null);
+  const [nextHolidayName, setNextHolidayName] = useState<string>('');
+  const [isInHoliday, setIsInHoliday] = useState<boolean>(false);
 
   useEffect(() => {
     loadCalendarData();
   }, []);
 
-  const loadCalendarData = async () => {
-    // Calculate days until October 7, 2025
-    const today = new Date();
-    const holidayDate = new Date(2025, 9, 7); // October 7, 2025
-    const timeDiff = holidayDate.getTime() - today.getTime();
-    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+  const parseHolidayDates = (period: string): { start: Date | null, end: Date | null } => {
+    // Parse dates like "07.10–12.10.2025" or "31.12.2025 – 11.01.2026"
+    
+    // Full format with years: "31.12.2025 – 11.01.2026"
+    const fullMatch = period.match(/(\d{1,2})\.(\d{1,2})\.(\d{4})\s*[–-]\s*(\d{1,2})\.(\d{1,2})\.(\d{4})/);
+    if (fullMatch) {
+      const [, startDay, startMonth, startYear, endDay, endMonth, endYear] = fullMatch;
+      return {
+        start: new Date(parseInt(startYear), parseInt(startMonth) - 1, parseInt(startDay)),
+        end: new Date(parseInt(endYear), parseInt(endMonth) - 1, parseInt(endDay))
+      };
+    }
+    
+    // Short format: "07.10–12.10.2025"
+    const shortMatch = period.match(/(\d{1,2})\.(\d{1,2})[–-](\d{1,2})\.(\d{1,2})\.(\d{4})/);
+    if (shortMatch) {
+      const [, startDay, startMonth, endDay, endMonth, year] = shortMatch;
+      return {
+        start: new Date(parseInt(year), parseInt(startMonth) - 1, parseInt(startDay)),
+        end: new Date(parseInt(year), parseInt(endMonth) - 1, parseInt(endDay))
+      };
+    }
+    
+    return { start: null, end: null };
+  };
 
-    if (daysDiff > 0) {
-      setDaysUntilHoliday(daysDiff);
+  const findNextHoliday = () => {
+    const today = new Date();
+    let nextHoliday = null;
+    let minDaysDiff = Infinity;
+    let currentHoliday = null;
+
+    for (const holiday of schoolCalendarData.holidays) {
+      const { start, end } = parseHolidayDates(holiday.period);
+      if (start && end) {
+        // Check if we're currently in this holiday
+        if (today >= start && today <= end) {
+          const timeDiffToEnd = end.getTime() - today.getTime();
+          const daysDiffToEnd = Math.ceil(timeDiffToEnd / (1000 * 3600 * 24));
+          currentHoliday = {
+            name: holiday.name,
+            days: daysDiffToEnd,
+            isActive: true
+          };
+          break; // If we're in a holiday, use this one
+        }
+        
+        // Check for next upcoming holiday (start date)
+        const timeDiffToStart = start.getTime() - today.getTime();
+        const daysDiffToStart = Math.ceil(timeDiffToStart / (1000 * 3600 * 24));
+        
+        if (daysDiffToStart > 0 && daysDiffToStart < minDaysDiff) {
+          minDaysDiff = daysDiffToStart;
+          nextHoliday = {
+            name: holiday.name,
+            days: daysDiffToStart,
+            isActive: false
+          };
+        }
+      }
+    }
+    
+    return currentHoliday || nextHoliday;
+  };
+
+  const loadCalendarData = async () => {
+    const nextHoliday = findNextHoliday();
+    
+    if (nextHoliday) {
+      setDaysUntilHoliday(nextHoliday.days);
+      setNextHolidayName(nextHoliday.name);
+      setIsInHoliday(nextHoliday.isActive || false);
+    } else {
+      setDaysUntilHoliday(null);
+      setNextHolidayName('');
+      setIsInHoliday(false);
     }
   };
 
@@ -176,18 +237,18 @@ export default function CalendarScreen() {
         }
       >
         {/* Holiday Counter */}
-        <ThemedView style={styles.counterCard}>
+        <ThemedView style={[styles.counterCard, isInHoliday && styles.holidayActiveCard]}>
           <ThemedText type="subtitle" style={styles.counterTitle}>
-            До каникул осталось
+            {isInHoliday ? 'До конца каникул осталось' : 'До каникул осталось'}
           </ThemedText>
           {daysUntilHoliday !== null ? (
             <>
-              <ThemedText type="title" style={styles.counterNumber}>
+              <ThemedText type="title" style={[styles.counterNumber, isInHoliday && styles.holidayActiveNumber]}>
                 {daysUntilHoliday}{" "}
                 {(() => {
                   const lastDigit = daysUntilHoliday % 10;
                   const lastTwoDigits = daysUntilHoliday % 100;
-                  
+
                   if (lastTwoDigits >= 11 && lastTwoDigits <= 14) {
                     return "дней";
                   } else if (lastDigit === 1) {
@@ -214,9 +275,6 @@ export default function CalendarScreen() {
 
         {/* Terms */}
         <ThemedView style={styles.section}>
-          <ThemedText type="subtitle" style={styles.sectionTitle}>
-            Деление учебного года
-          </ThemedText>
           <ThemedView style={styles.infoCard}>
             <ThemedText type="defaultSemiBold" style={styles.termTitle}>
               1–9 классы → триместры:
@@ -304,39 +362,6 @@ export default function CalendarScreen() {
                 {schoolCalendarData.schedule.shifts.shift2.classes.join(", ")}
               </ThemedText>
             </ThemedView>
-          </ThemedView>
-        </ThemedView>
-
-        {/* Timetable */}
-        <ThemedView style={styles.section}>
-          <ThemedText type="subtitle" style={styles.sectionTitle}>
-            🕐 Расписание уроков
-          </ThemedText>
-          <ThemedView style={styles.infoCard}>
-            <ThemedText type="defaultSemiBold" style={styles.termTitle}>
-              1 смена:
-            </ThemedText>
-            {schoolCalendarData.schedule.timetable.shift1.map(
-              (lesson, index) => (
-                <ThemedText key={index} style={styles.timetableItem}>
-                  {lesson}
-                </ThemedText>
-              )
-            )}
-
-            <ThemedText
-              type="defaultSemiBold"
-              style={[styles.termTitle, { marginTop: 16 }]}
-            >
-              2 смена:
-            </ThemedText>
-            {schoolCalendarData.schedule.timetable.shift2.map(
-              (lesson, index) => (
-                <ThemedText key={index} style={styles.timetableItem}>
-                  {lesson}
-                </ThemedText>
-              )
-            )}
           </ThemedView>
         </ThemedView>
 
@@ -428,6 +453,32 @@ const styles = StyleSheet.create({
   counterLoading: {
     color: "#FFFFFF",
     opacity: 0.8,
+  },
+  holidayNameText: {
+    color: "#FFFFFF",
+    opacity: 0.9,
+    fontSize: 14,
+    textAlign: "center",
+    marginTop: 8,
+    fontWeight: "500",
+  },
+  holidayActiveCard: {
+    background: "linear-gradient(135deg, #FF9800, #FFB74D)",
+    backgroundColor: "#FF9800", // Fallback for non-gradient support
+  },
+  holidayActiveNumber: {
+    color: "#FFFFFF",
+    textShadowColor: "#E65100",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+  holidayActiveText: {
+    color: "#FFFFFF",
+    opacity: 0.95,
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 8,
+    fontWeight: "600",
   },
   section: {
     paddingHorizontal: 16,

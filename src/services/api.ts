@@ -457,7 +457,6 @@ class ApiService {
       // Look for common patterns in WordPress news sites
       // This is a basic implementation - can be enhanced
       const titlePattern = /<h2[^>]*>.*?<a[^>]*href="([^"]*)"[^>]*>([^<]*)<\/a>.*?<\/h2>/gi;
-      const datePattern = /(\d{1,2})\s+(января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря),?\s+(\d{4})/gi;
       
       let match;
       let id = 1;
@@ -577,7 +576,7 @@ class ApiService {
             return parsedPosts;
           }
         }
-      } catch (fetchError) {
+      } catch {
         console.log('⚠️ VK mobile fetch failed, trying alternative methods');
       }
 
@@ -598,7 +597,7 @@ class ApiService {
             return rssPosts;
           }
         }
-      } catch (rssError) {
+      } catch {
         console.log('⚠️ VK RSS fetch failed');
       }
 
@@ -621,7 +620,7 @@ class ApiService {
             }
           }
         }
-      } catch (apiError) {
+      } catch {
         console.log('⚠️ VK API fetch failed');
       }
 
@@ -669,7 +668,7 @@ class ApiService {
           try {
             // VK uses relative dates like "час назад", "вчера в 14:30"
             date = this.parseVKDate(dateMatch[1]);
-          } catch (e) {
+          } catch {
             // Use current date as fallback
           }
         }
@@ -732,7 +731,7 @@ class ApiService {
         if (dateMatch) {
           try {
             date = new Date(dateMatch[1]).toISOString();
-          } catch (e) {
+          } catch {
             // Use current date as fallback
           }
         }
@@ -914,7 +913,7 @@ class ApiService {
             return parsedPosts;
           }
         }
-      } catch (fetchError) {
+      } catch {
         console.log('⚠️ Direct fetch failed, trying WebFetch approach');
       }
 
@@ -969,7 +968,7 @@ class ApiService {
         if (dateMatch) {
           try {
             date = new Date(dateMatch[1]).toISOString();
-          } catch (e) {
+          } catch {
             // Use current date as fallback
           }
         }

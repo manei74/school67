@@ -1,5 +1,4 @@
 import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
 import React from "react";
 import {
   Modal,
@@ -13,7 +12,7 @@ interface SettingsBottomSheetProps {
   visible: boolean;
   onClose: () => void;
   onChangeClass: () => void;
-  onCheckUpdates: () => void;
+  onShowAppInfo: () => void;
   onBugReport: () => void;
 }
 
@@ -21,7 +20,7 @@ export default function SettingsBottomSheet({
   visible,
   onClose,
   onChangeClass,
-  onCheckUpdates,
+  onShowAppInfo,
   onBugReport,
 }: SettingsBottomSheetProps) {
   return (
@@ -66,12 +65,12 @@ export default function SettingsBottomSheet({
               style={styles.option}
               onPress={() => {
                 onClose();
-                onCheckUpdates();
+                onShowAppInfo();
               }}
               activeOpacity={0.7}
             >
-              <ThemedText style={styles.optionIcon}>🔄</ThemedText>
-              <ThemedText style={styles.optionText}>Проверить обновления</ThemedText>
+              <ThemedText style={styles.optionIcon}>ℹ️</ThemedText>
+              <ThemedText style={styles.optionText}>О приложении</ThemedText>
               <ThemedText style={styles.chevron}>›</ThemedText>
             </TouchableOpacity>
 

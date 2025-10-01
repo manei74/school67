@@ -12,14 +12,8 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   
-  // Safe area with fallback
-  let insets;
-  try {
-    insets = useSafeAreaInsets();
-  } catch (error) {
-    console.log("⚠️ SafeAreaProvider not found in tabs, using fallback");
-    insets = { bottom: 20, top: 20, left: 0, right: 0 };
-  }
+  // Always call the hook
+  const insets = useSafeAreaInsets();
 
   return (
     <Tabs

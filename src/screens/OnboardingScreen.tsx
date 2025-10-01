@@ -10,17 +10,11 @@ import { Class } from "../types";
 export default function OnboardingScreen() {
   console.log("👋 OnboardingScreen starting");
 
-  // Safe area with fallback - extra padding for Samsung devices
-  let insets;
-  try {
-    insets = useSafeAreaInsets();
-  } catch (error) {
-    console.log("⚠️ SafeAreaProvider not found, using fallback");
-    insets = { bottom: 40, top: 20, left: 0, right: 0 };
-  }
+  // Always call the hook
+  const insets = useSafeAreaInsets();
   
-  // Platform-specific padding: iOS safe area vs Android navigation
-  const bottomPadding = Platform.OS === 'ios' ? Math.max(insets.bottom, 20) : 50;
+  // Platform-specific padding: iOS safe area vs Android navigation  
+  const bottomPadding = Platform.OS === 'ios' ? Math.max(insets.bottom, 10) : 25;
   
   const { completeOnboarding, setSelectedClass } = useAppStore();
   const [classes, setClasses] = useState<Class[]>([]);

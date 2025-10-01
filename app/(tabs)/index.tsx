@@ -2,17 +2,15 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import SettingsBottomSheet from "@/src/components/SettingsBottomSheet";
-import { checkForUpdatesManually } from "@/src/components/UpdateChecker";
 import BellsScreen from "@/src/screens/BellsScreen";
 import SchoolNavigationScreen from "@/src/screens/SchoolNavigationScreen";
 import WeekScheduleScreen from "@/src/screens/WeekScheduleScreen";
 import { apiService } from "@/src/services/api";
 import { useAppStore } from "@/src/store/simpleStore";
 import { formatClassName } from "@/src/utils/classUtils";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Alert,
-  Dimensions,
   Linking,
   Platform,
   RefreshControl,
@@ -32,7 +30,6 @@ export default function ScheduleScreen() {
     isOnboardingCompleted,
     setSchedule,
     setLoading,
-    setSelectedClass,
     resetOnboarding,
   } = useAppStore();
 
@@ -40,13 +37,7 @@ export default function ScheduleScreen() {
   const [activeTab, setActiveTab] = useState<ScheduleTab>("today");
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
 
-  useEffect(() => {
-    if (isOnboardingCompleted && settings.selectedClassId) {
-      loadTodaySchedule();
-    }
-  }, [isOnboardingCompleted, settings.selectedClassId]);
-
-  const loadTodaySchedule = async () => {
+  const loadTodaySchedule = useCallback(async () => {
     if (!settings.selectedClassId) return;
 
     setLoading(true);
@@ -62,7 +53,14 @@ export default function ScheduleScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [settings.selectedClassId, setLoading, setSchedule]);
+
+  useEffect(() => {
+    if (isOnboardingCompleted && settings.selectedClassId) {
+      loadTodaySchedule();
+    }
+  }, [isOnboardingCompleted, settings.selectedClassId, loadTodaySchedule]);
+
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -144,6 +142,20 @@ export default function ScheduleScreen() {
           },
         },
       ]
+    );
+  };
+
+  const showAppInfo = () => {
+    const appVersion = "1.0.4";
+    const lastUpdate = "1 октября 2025";
+
+    Alert.alert(
+      "О приложении",
+      `Мобильное приложение «Лицей 67»
+
+Версия: ${appVersion}
+Последнее обновление: ${lastUpdate}`,
+      [{ text: "ОК" }]
     );
   };
 
@@ -334,7 +346,7 @@ export default function ScheduleScreen() {
         visible={settingsModalVisible}
         onClose={() => setSettingsModalVisible(false)}
         onChangeClass={showClassSelection}
-        onCheckUpdates={checkForUpdatesManually}
+        onShowAppInfo={showAppInfo}
         onBugReport={openBugReport}
       />
     </ThemedView>
@@ -502,7 +514,7 @@ const styles = StyleSheet.create({
   },
   lessonTeacher: {
     color: "#666",
-    fontSize: Platform.OS === 'ios' ? 13 : 14,
+    fontSize: Platform.OS === "ios" ? 13 : 14,
     fontStyle: "italic",
     marginTop: 2,
   },

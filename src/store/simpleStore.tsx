@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useMemo } from 'react';
 import { AppSettings, Class, Schedule, Olympiad, Holiday } from '../types';
 import { StorageService, STORAGE_KEYS } from '../utils/storage';
 
@@ -87,98 +87,134 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   console.log('🏪 AppProvider state:', state);
 
-  const actions: AppActions = {
-    updateSettings: async (newSettings: Partial<AppSettings>) => {
-      const updatedSettings = { ...state.settings, ...newSettings };
-      setState(prev => ({
+  const updateSettings = useCallback(async (newSettings: Partial<AppSettings>) => {
+    setState(prev => {
+      const updatedSettings = { ...prev.settings, ...newSettings };
+      
+      // Persist to AsyncStorage (don't await in setState)
+      StorageService.setItem(STORAGE_KEYS.APP_SETTINGS, updatedSettings)
+        .then(() => console.log('📱 Settings saved to storage:', updatedSettings))
+        .catch(error => console.error('📱 Error saving settings:', error));
+      
+      return {
         ...prev,
         settings: updatedSettings
-      }));
-      // Persist to AsyncStorage
-      try {
-        await StorageService.setItem(STORAGE_KEYS.APP_SETTINGS, updatedSettings);
-        console.log('📱 Settings saved to storage:', updatedSettings);
-      } catch (error) {
-        console.error('📱 Error saving settings:', error);
-      }
-    },
+      };
+    });
+  }, []);
 
-    setSelectedClass: async (classId: string) => {
-      const updatedSettings = { ...state.settings, selectedClassId: classId };
-      setState(prev => ({
+  const setSelectedClass = useCallback(async (classId: string) => {
+    setState(prev => {
+      const updatedSettings = { ...prev.settings, selectedClassId: classId };
+      
+      // Persist to AsyncStorage (don't await in setState)
+      StorageService.setItem(STORAGE_KEYS.APP_SETTINGS, updatedSettings)
+        .then(() => console.log('📱 Selected class saved to storage:', classId))
+        .catch(error => console.error('📱 Error saving selected class:', error));
+      
+      return {
         ...prev,
         settings: updatedSettings
-      }));
-      // Persist to AsyncStorage
-      try {
-        await StorageService.setItem(STORAGE_KEYS.APP_SETTINGS, updatedSettings);
-        console.log('📱 Selected class saved to storage:', classId);
-      } catch (error) {
-        console.error('📱 Error saving selected class:', error);
-      }
-    },
+      };
+    });
+  }, []);
 
-    completeOnboarding: async () => {
-      setState(prev => ({ ...prev, isOnboardingCompleted: true }));
-      // Persist to AsyncStorage
-      try {
-        await StorageService.setItem(STORAGE_KEYS.ONBOARDING_COMPLETED, true);
-        console.log('📱 Onboarding completion saved to storage');
-      } catch (error) {
-        console.error('📱 Error saving onboarding status:', error);
-      }
-    },
+  const completeOnboarding = useCallback(async () => {
+    setState(prev => ({ ...prev, isOnboardingCompleted: true }));
+    
+    // Persist to AsyncStorage
+    try {
+      await StorageService.setItem(STORAGE_KEYS.ONBOARDING_COMPLETED, true);
+      console.log('📱 Onboarding completion saved to storage');
+    } catch (error) {
+      console.error('📱 Error saving onboarding status:', error);
+    }
+  }, []);
 
-    resetOnboarding: async () => {
-      const clearedSettings = { ...state.settings, selectedClassId: undefined };
-      setState(prev => ({ 
+  const resetOnboarding = useCallback(async () => {
+    setState(prev => {
+      const clearedSettings = { ...prev.settings, selectedClassId: undefined };
+      
+      // Persist to AsyncStorage (don't await in setState)
+      StorageService.setItem(STORAGE_KEYS.ONBOARDING_COMPLETED, false)
+        .then(() => console.log('📱 Onboarding reset saved to storage'))
+        .catch(error => console.error('📱 Error saving onboarding reset:', error));
+      
+      StorageService.setItem(STORAGE_KEYS.APP_SETTINGS, clearedSettings)
+        .then(() => console.log('📱 Settings cleared and saved to storage'))
+        .catch(error => console.error('📱 Error saving cleared settings:', error));
+      
+      return { 
         ...prev, 
         isOnboardingCompleted: false,
         settings: clearedSettings
-      }));
-      // Persist to AsyncStorage
-      try {
-        await StorageService.setItem(STORAGE_KEYS.ONBOARDING_COMPLETED, false);
-        await StorageService.setItem(STORAGE_KEYS.APP_SETTINGS, clearedSettings);
-        console.log('📱 Onboarding reset and settings cleared');
-      } catch (error) {
-        console.error('📱 Error resetting onboarding:', error);
-      }
-    },
+      };
+    });
+  }, []);
 
-    setSchedule: (schedule: Schedule) => {
-      setState(prev => ({ ...prev, schedule }));
-    },
+  const setSchedule = useCallback((schedule: Schedule) => {
+    setState(prev => ({ ...prev, schedule }));
+  }, []);
 
-    setWeekSchedule: (schedules: Schedule[]) => {
-      setState(prev => ({ ...prev, weekSchedule: schedules }));
-    },
+  const setWeekSchedule = useCallback((schedules: Schedule[]) => {
+    setState(prev => ({ ...prev, weekSchedule: schedules }));
+  }, []);
 
-    setOlympiads: (olympiads: Olympiad[]) => {
-      setState(prev => ({ ...prev, olympiads }));
-    },
+  const setOlympiads = useCallback((olympiads: Olympiad[]) => {
+    setState(prev => ({ ...prev, olympiads }));
+  }, []);
 
-    setHolidays: (holidays: Holiday[]) => {
-      setState(prev => ({ ...prev, holidays }));
-    },
+  const setHolidays = useCallback((holidays: Holiday[]) => {
+    setState(prev => ({ ...prev, holidays }));
+  }, []);
 
-    setLoading: (loading: boolean) => {
-      setState(prev => ({ ...prev, isLoading: loading }));
-    },
+  const setLoading = useCallback((loading: boolean) => {
+    setState(prev => ({ ...prev, isLoading: loading }));
+  }, []);
 
-    setOfflineStatus: (offline: boolean) => {
-      setState(prev => ({ ...prev, isOffline: offline }));
-    },
+  const setOfflineStatus = useCallback((offline: boolean) => {
+    setState(prev => ({ ...prev, isOffline: offline }));
+  }, []);
 
-    updateLastSync: () => {
-      setState(prev => ({ ...prev, lastSync: new Date() }));
-    },
-  };
+  const updateLastSync = useCallback(() => {
+    setState(prev => ({ ...prev, lastSync: new Date() }));
+  }, []);
+
+  const actions = useMemo(() => ({
+    updateSettings,
+    setSelectedClass,
+    completeOnboarding,
+    resetOnboarding,
+    setSchedule,
+    setWeekSchedule,
+    setOlympiads,
+    setHolidays,
+    setLoading,
+    setOfflineStatus,
+    updateLastSync,
+  }), [
+    updateSettings,
+    setSelectedClass,
+    completeOnboarding,
+    resetOnboarding,
+    setSchedule,
+    setWeekSchedule,
+    setOlympiads,
+    setHolidays,
+    setLoading,
+    setOfflineStatus,
+    updateLastSync,
+  ]);
+
+  const contextValue = useMemo(() => ({
+    ...state,
+    ...actions
+  }), [state, actions]);
 
   console.log('🏪 AppProvider rendering context with actions');
   
   return (
-    <AppContext.Provider value={{ ...state, ...actions }}>
+    <AppContext.Provider value={contextValue}>
       {children}
     </AppContext.Provider>
   );
