@@ -118,18 +118,25 @@
 - **Version Format:** MAJOR.MINOR.PATCH (semantic versioning)
 - **Update Policy:** Increment version with each significant change
 
-**CRITICAL: Version Update Checklist - ALL locations must be updated:**
-1. **package.json** → `"version": "X.Y.Z"`
-2. **app.json** → `"version": "X.Y.Z"` (main app version)
-3. **app.json** → `"buildNumber": "X.Y.Z"` (iOS App Store)
-4. **app.json** → `"versionCode": Z` (Android - use patch number)
-5. **CLAUDE.md** → Update "Current Version" in this section
+**SIMPLIFIED: Centralized Version Management**
+✅ **Reduced to 3 locations only (from 5):**
+1. **src/config/env.ts** → `VERSION: "X.Y.Z"` (for app logic)
+2. **app.config.js** → `VERSION: "X.Y.Z"` (for native builds)
+3. **package.json** → `"version": "X.Y.Z"` (for npm)
 
-**Example for version 1.0.6:**
-- package.json: `"version": "1.0.6"`
-- app.json version: `"version": "1.0.6"`
-- app.json iOS buildNumber: `"buildNumber": "1.0.6"`
-- app.json Android versionCode: `"versionCode": 6`
+**Automatic Propagation:**
+- ✅ **App Info Display** → Uses ENV_CONFIG.VERSION from src/config/env.ts
+- ✅ **iOS buildNumber** → Auto-set to VERSION value from app.config.js
+- ✅ **Android versionCode** → Auto-calculated from patch number in app.config.js
+
+**Version Update Process:**
+1. Update `src/config/env.ts` → `VERSION: "X.Y.Z"`
+2. Update `app.config.js` → `VERSION: "X.Y.Z"` 
+3. Update `package.json` → `"version": "X.Y.Z"`
+4. Update this documentation → "Current Version"
+5. Commit changes
+
+**Note:** app.json is now replaced by app.config.js for dynamic configuration
 
 ### Commit Standards
 - Use descriptive commit messages

@@ -7,7 +7,7 @@ export const ENV_CONFIG = {
 
   // App Configuration
   APP_NAME: "Лицей №67",
-  VERSION: "1.0.0",
+  VERSION: "1.0.6",
 
   // Feature flags
   FEATURES: {

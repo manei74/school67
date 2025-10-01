@@ -8,6 +8,7 @@ import WeekScheduleScreen from "@/src/screens/WeekScheduleScreen";
 import { apiService } from "@/src/services/api";
 import { useAppStore } from "@/src/store/simpleStore";
 import { formatClassName } from "@/src/utils/classUtils";
+import { ENV_CONFIG } from "@/src/config/env";
 import React, { useEffect, useState, useCallback } from "react";
 import {
   Alert,
@@ -146,7 +147,7 @@ export default function ScheduleScreen() {
   };
 
   const showAppInfo = () => {
-    const appVersion = "1.0.4";
+    const appVersion = ENV_CONFIG.VERSION;
     const lastUpdate = "1 октября 2025";
 
     Alert.alert(
