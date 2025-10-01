@@ -1,6 +1,6 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { RefreshControl, ScrollView, StyleSheet } from "react-native";
 
 const schoolCalendarData = {
@@ -132,14 +132,9 @@ const schoolCalendarData = {
 export default function CalendarScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [daysUntilHoliday, setDaysUntilHoliday] = useState<number | null>(null);
-  const [nextHolidayName, setNextHolidayName] = useState<string>('');
   const [isInHoliday, setIsInHoliday] = useState<boolean>(false);
 
-  useEffect(() => {
-    loadCalendarData();
-  }, []);
-
-  const parseHolidayDates = (period: string): { start: Date | null, end: Date | null } => {
+  const parseHolidayDates = useCallback((period: string): { start: Date | null, end: Date | null } => {
     // Parse dates like "07.10–12.10.2025" or "31.12.2025 – 11.01.2026"
     
     // Full format with years: "31.12.2025 – 11.01.2026"
@@ -163,9 +158,9 @@ export default function CalendarScreen() {
     }
     
     return { start: null, end: null };
-  };
+  }, []);
 
-  const findNextHoliday = () => {
+  const findNextHoliday = useCallback(() => {
     const today = new Date();
     let nextHoliday = null;
     let minDaysDiff = Infinity;
@@ -202,21 +197,24 @@ export default function CalendarScreen() {
     }
     
     return currentHoliday || nextHoliday;
-  };
+  }, [parseHolidayDates]);
 
-  const loadCalendarData = async () => {
+  const loadCalendarData = useCallback(async () => {
     const nextHoliday = findNextHoliday();
     
     if (nextHoliday) {
       setDaysUntilHoliday(nextHoliday.days);
-      setNextHolidayName(nextHoliday.name);
       setIsInHoliday(nextHoliday.isActive || false);
     } else {
       setDaysUntilHoliday(null);
-      setNextHolidayName('');
       setIsInHoliday(false);
     }
-  };
+  }, [findNextHoliday]);
+
+  useEffect(() => {
+    loadCalendarData();
+  }, [loadCalendarData]);
+
 
   const onRefresh = async () => {
     setRefreshing(true);

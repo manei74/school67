@@ -106,6 +106,19 @@
 ### Auto-Commit Policy
 **IMPORTANT:** All code changes must be automatically committed. Even small changes should trigger a commit.
 
+### Mandatory Pre-Commit Workflow
+**CRITICAL:** Before every commit, the following steps are MANDATORY:
+1. **Run lint check:** `npm run lint` - must pass with zero errors
+2. **Update app version:** Increment version number in `package.json`
+3. **TypeScript check:** Ensure `npx tsc --noEmit` passes without errors
+4. **Commit with proper attribution:** Include Claude Code attribution
+
+### Version Management
+- **Current Version:** 1.0.6 (as of October 2025)
+- **Version Format:** MAJOR.MINOR.PATCH (semantic versioning)
+- **Update Policy:** Increment version with each significant change
+- **Location:** Update `version` field in `package.json`
+
 ### Commit Standards
 - Use descriptive commit messages
 - Include change summary and technical details
