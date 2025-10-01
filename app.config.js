@@ -30,7 +30,7 @@ export default {
       "**/*"
     ],
     ios: {
-      supportsTablet: true,
+      supportsTablet: false,
       bundleIdentifier: "com.lyceum67.app",
       buildNumber: ENV_CONFIG.VERSION,
       deploymentTarget: "13.0",
