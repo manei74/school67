@@ -117,7 +117,19 @@
 - **Current Version:** 1.0.6 (as of October 2025)
 - **Version Format:** MAJOR.MINOR.PATCH (semantic versioning)
 - **Update Policy:** Increment version with each significant change
-- **Location:** Update `version` field in `package.json`
+
+**CRITICAL: Version Update Checklist - ALL locations must be updated:**
+1. **package.json** → `"version": "X.Y.Z"`
+2. **app.json** → `"version": "X.Y.Z"` (main app version)
+3. **app.json** → `"buildNumber": "X.Y.Z"` (iOS App Store)
+4. **app.json** → `"versionCode": Z` (Android - use patch number)
+5. **CLAUDE.md** → Update "Current Version" in this section
+
+**Example for version 1.0.6:**
+- package.json: `"version": "1.0.6"`
+- app.json version: `"version": "1.0.6"`
+- app.json iOS buildNumber: `"buildNumber": "1.0.6"`
+- app.json Android versionCode: `"versionCode": 6`
 
 ### Commit Standards
 - Use descriptive commit messages
