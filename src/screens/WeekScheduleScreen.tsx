@@ -13,6 +13,38 @@ export default function WeekScheduleScreen() {
   const [currentWeekOffset, setCurrentWeekOffset] = useState(0); // 0 = current week, 1 = next week, -1 = previous week
   const [isInitialized, setIsInitialized] = useState(false);
 
+  const initializeWeekOffset = () => {
+    // Always start with offset 0 (current school week)
+    setCurrentWeekOffset(0);
+  };
+
+  const getTargetWeek = useCallback((weekOffset: number) => {
+    const now = new Date();
+    const schoolWeekStart = getSchoolWeekStart(now);
+
+    // Apply offset to the school week base
+    const targetDate = new Date(schoolWeekStart);
+    targetDate.setDate(schoolWeekStart.getDate() + (weekOffset * 7));
+
+    const week = getWeekNumber(targetDate);
+    return `${targetDate.getFullYear()}-W${week.toString().padStart(2, '0')}`;
+  }, []);
+
+  const loadWeekSchedule = useCallback(async () => {
+    if (!settings.selectedClassId) return;
+
+    setLoading(true);
+    try {
+      const targetWeek = getTargetWeek(currentWeekOffset);
+      const schedules = await apiService.getWeekSchedule(settings.selectedClassId, targetWeek);
+      setWeekSchedule(schedules);
+    } catch (error) {
+      console.error('Failed to load week schedule:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [settings.selectedClassId, currentWeekOffset, setLoading, setWeekSchedule, getTargetWeek]);
+
   useEffect(() => {
     if (settings.selectedClassId && !isInitialized) {
       // Initialize week offset based on current day (only once)
@@ -31,43 +63,11 @@ export default function WeekScheduleScreen() {
     }
   }, [currentWeekOffset, settings.selectedClassId, loadWeekSchedule]);
 
-  const initializeWeekOffset = () => {
-    // Always start with offset 0 (current school week)
-    setCurrentWeekOffset(0);
-  };
-
-  const loadWeekSchedule = useCallback(async () => {
-    if (!settings.selectedClassId) return;
-    
-    setLoading(true);
-    try {
-      const targetWeek = getTargetWeek(currentWeekOffset);
-      const schedules = await apiService.getWeekSchedule(settings.selectedClassId, targetWeek);
-      setWeekSchedule(schedules);
-    } catch (error) {
-      console.error('Failed to load week schedule:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, [settings.selectedClassId, currentWeekOffset, setLoading, setWeekSchedule, getTargetWeek]);
-
   const onRefresh = async () => {
     setRefreshing(true);
     await loadWeekSchedule();
     setRefreshing(false);
   };
-
-  const getTargetWeek = useCallback((weekOffset: number) => {
-    const now = new Date();
-    const schoolWeekStart = getSchoolWeekStart(now);
-    
-    // Apply offset to the school week base
-    const targetDate = new Date(schoolWeekStart);
-    targetDate.setDate(schoolWeekStart.getDate() + (weekOffset * 7));
-    
-    const week = getWeekNumber(targetDate);
-    return `${targetDate.getFullYear()}-W${week.toString().padStart(2, '0')}`;
-  }, []);
 
   const getCurrentWeek = () => {
     const now = new Date();

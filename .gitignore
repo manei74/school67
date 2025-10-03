@@ -32,6 +32,11 @@ yarn-error.*
 
 # local env files
 .env*.local
+.env
+.env.local
+.env.*.local
+*.env
+!*.env.example
 
 # typescript
 *.tsbuildinfo
@@ -40,3 +45,24 @@ app-example
 
 # Database documentation
 DATABASE_GUIDE.md
+
+# app configs
+apps/**/config/*.local.*
+apps/**/config/*.secrets.*
+apps/**/config/*.private.*
+src/config/env.ts
+src/config/*.local.*
+src/config/*.secrets.*
+
+# Expo/React Native artifacts
+*.keystore
+*.jks
+*.p8
+*.p12
+*.mobileprovision
+
+# OS/IDE
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json

@@ -24,11 +24,10 @@
 
 ### Backend & Database
 - **Database:** MongoDB Atlas
-  - Cluster: `cluster0.6uahvol.mongodb.net`
   - Database: `school-schedule`
 - **API:** Node.js + Express + Mongoose
 - **Production API:** `https://school67-backend.onrender.com/api/v1`
-- **Authentication:** Database credentials in environment
+- **Authentication:** Database credentials in environment variables
 
 ### Data Collections
 - **classes:** Class information (5a-11a)
@@ -72,7 +71,7 @@
 ## API Integration
 
 ### Production Endpoints
-- **Base URL:** `https://school67-backend.onrender.com/api/v1`
+- **Base URL:** 
 - **Schedule:** `GET /schedule?classId={classCode}&date={YYYY-MM-DD}`
 - **Week Schedule:** `GET /schedule/week?classId={classCode}&date={YYYY-MM-DD}`
 - **Health Check:** `GET /health`
@@ -184,7 +183,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ## Environment Configuration
 
 ### API URLs
-- **Production:** `https://school67-backend.onrender.com/api/v1`
+
 - **Local Development:** `http://localhost:3000/api/v1`
 - **Configurable via:** `src/config/env.ts`
 
