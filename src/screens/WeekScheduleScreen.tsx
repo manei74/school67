@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { StyleSheet, ScrollView, RefreshControl, View, TouchableOpacity } from 'react-native';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { ThemedText } from '@/src/components/ui/ThemedText';
+import { ThemedView } from '@/src/components/ui/ThemedView';
 import { useAppStore } from '../store/simpleStore';
 import { apiService } from '../services/api';
 

@@ -52,15 +52,6 @@ export interface Bell {
   type: 'lesson' | 'break';
 }
 
-export interface NewsItem {
-  id: string;
-  title: string;
-  content: string;
-  date: string;
-  source: 'site' | 'vk' | 'telegram';
-  link?: string;
-}
-
 export interface Olympiad {
   id: string;
   title: string;

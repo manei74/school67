@@ -1,7 +1,7 @@
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import { IconSymbol } from "@/components/ui/IconSymbol";
-import SettingsBottomSheet from "@/src/components/SettingsBottomSheet";
+import { ThemedText } from "@/src/components/ui/ThemedText";
+import { ThemedView } from "@/src/components/ui/ThemedView";
+import { IconSymbol } from "@/src/components/ui/IconSymbol";
+import SettingsBottomSheet from "@/src/components/feature/SettingsBottomSheet";
 import BellsScreen from "@/src/screens/BellsScreen";
 import SchoolNavigationScreen from "@/src/screens/SchoolNavigationScreen";
 import WeekScheduleScreen from "@/src/screens/WeekScheduleScreen";

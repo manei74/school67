@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, ScrollView, RefreshControl } from 'react-native';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { ThemedText } from '@/src/components/ui/ThemedText';
+import { ThemedView } from '@/src/components/ui/ThemedView';
 import { apiService } from '../services/api';
 import { Bell } from '../types';
 
