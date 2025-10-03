@@ -52,31 +52,12 @@ export interface Bell {
   type: 'lesson' | 'break';
 }
 
-export interface Olympiad {
-  id: string;
-  title: string;
-  subject: string;
-  dateTimeStart: string;
-  location: string;
-  link?: string;
-  stage: string;
-  classId?: string;
-}
-
 export interface Holiday {
   id: string;
   title: string;
   startDate: string;
   endDate: string;
   type: 'vacation' | 'holiday';
-}
-
-export interface Document {
-  id: string;
-  title: string;
-  type: 'pdf' | 'html';
-  content?: string;
-  link?: string;
 }
 
 export interface AppSettings {

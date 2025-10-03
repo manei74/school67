@@ -27,7 +27,7 @@ function MainTabs() {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
+          let iconName: keyof typeof Ionicons.glyphMap;
 
           switch (route.name) {
             case 'Schedule':
@@ -49,7 +49,7 @@ function MainTabs() {
               iconName = focused ? 'school' : 'school-outline';
               break;
             default:
-              iconName = 'circle';
+              iconName = 'ellipse-outline';
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;

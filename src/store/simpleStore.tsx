@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useMemo } from 'react';
-import { AppSettings, Class, Schedule, Olympiad, Holiday } from '../types';
+import { AppSettings, Class, Schedule, Holiday } from '../types';
 import { StorageService, STORAGE_KEYS } from '../utils/storage';
 
 interface AppState {
@@ -8,7 +8,6 @@ interface AppState {
   classes: Class[];
   schedule: Schedule | null;
   weekSchedule: Schedule[];
-  olympiads: Olympiad[];
   holidays: Holiday[];
   isLoading: boolean;
   isOffline: boolean;
@@ -22,7 +21,6 @@ interface AppActions {
   resetOnboarding: () => Promise<void>;
   setSchedule: (schedule: Schedule) => void;
   setWeekSchedule: (schedules: Schedule[]) => void;
-  setOlympiads: (olympiads: Olympiad[]) => void;
   setHolidays: (holidays: Holiday[]) => void;
   setLoading: (loading: boolean) => void;
   setOfflineStatus: (offline: boolean) => void;
@@ -45,7 +43,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     classes: [],
     schedule: null,
     weekSchedule: [],
-    olympiads: [],
     holidays: [],
     isLoading: false,
     isOffline: false,
@@ -160,10 +157,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setState(prev => ({ ...prev, weekSchedule: schedules }));
   }, []);
 
-  const setOlympiads = useCallback((olympiads: Olympiad[]) => {
-    setState(prev => ({ ...prev, olympiads }));
-  }, []);
-
   const setHolidays = useCallback((holidays: Holiday[]) => {
     setState(prev => ({ ...prev, holidays }));
   }, []);
@@ -187,7 +180,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     resetOnboarding,
     setSchedule,
     setWeekSchedule,
-    setOlympiads,
     setHolidays,
     setLoading,
     setOfflineStatus,
@@ -199,7 +191,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     resetOnboarding,
     setSchedule,
     setWeekSchedule,
-    setOlympiads,
     setHolidays,
     setLoading,
     setOfflineStatus,
