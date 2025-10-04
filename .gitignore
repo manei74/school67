@@ -66,3 +66,6 @@ src/config/*.secrets.*
 .idea/
 .vscode/*
 !.vscode/extensions.json
+# Documentation
+CLAUDE.md
+PRD.md
